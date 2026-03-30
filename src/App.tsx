@@ -18,6 +18,10 @@ const Appointments = lazy(() => import('@/pages/Appointments'))
 const CostCalculator = lazy(() => import('@/pages/CostCalculator'))
 const ReadinessQuiz = lazy(() => import('@/pages/ReadinessQuiz'))
 const Profile = lazy(() => import('@/pages/Profile'))
+const GiftList = lazy(() => import('@/pages/GiftList'))
+const Lullabies = lazy(() => import('@/pages/Lullabies'))
+const Stories = lazy(() => import('@/pages/Stories'))
+const ChildGuide = lazy(() => import('@/pages/ChildGuide'))
 
 function LoadingScreen() {
   return (
@@ -105,6 +109,18 @@ export default function App() {
           } />
           <Route path="/profile" element={
             <ProtectedRoute><Profile /></ProtectedRoute>
+          } />
+          <Route path="/gift-list" element={
+            <ProtectedRoute><GiftList /></ProtectedRoute>
+          } />
+          <Route path="/lullabies" element={
+            <ProtectedRoute><Lullabies /></ProtectedRoute>
+          } />
+          <Route path="/stories" element={
+            <ProtectedRoute><Stories /></ProtectedRoute>
+          } />
+          <Route path="/child-guide" element={
+            <ProtectedRoute><ChildGuide /></ProtectedRoute>
           } />
 
           {/* Fallback */}

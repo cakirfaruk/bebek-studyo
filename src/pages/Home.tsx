@@ -23,6 +23,9 @@ const featureCards: Record<string, FeatureCard[]> = {
     { path: '/memories', icon: 'favorite', title: 'Ani Defteri', desc: 'Ozel anlariniz', iconBg: 'bg-primary-container/20', iconColor: 'text-primary' },
     { path: '/appointments', icon: 'local_hospital', title: 'Randevular', desc: 'Takip edin', iconBg: 'bg-tertiary-container/20', iconColor: 'text-tertiary' },
     { path: '/cost-calculator', icon: 'savings', title: 'Maliyet', desc: 'Butce planlayin', iconBg: 'bg-primary-fixed/20', iconColor: 'text-primary' },
+    { path: '/gift-list', icon: 'redeem', title: 'Hediye Listesi', desc: 'Bebek hediyeleri', iconBg: 'bg-primary-container/20', iconColor: 'text-primary' },
+    { path: '/lullabies', icon: 'music_note', title: 'Ninniler', desc: 'Uyku sesleri', iconBg: 'bg-secondary-container/40', iconColor: 'text-secondary' },
+    { path: '/stories', icon: 'auto_stories', title: 'Masallar', desc: 'Uyku hikayeleri', iconBg: 'bg-tertiary-container/20', iconColor: 'text-tertiary' },
   ],
   dreaming: [
     { path: '/baby-face', icon: 'child_care', title: 'Bebek Yuzu', desc: 'AI ile tahmin', iconBg: 'bg-secondary-container/40', iconColor: 'text-secondary' },
@@ -37,6 +40,9 @@ const featureCards: Record<string, FeatureCard[]> = {
     { path: '/names', icon: 'auto_awesome', title: 'Isim Bulucu', desc: 'Hala ariyorum', iconBg: 'bg-secondary-container/40', iconColor: 'text-secondary' },
     { path: '/appointments', icon: 'local_hospital', title: 'Randevular', desc: 'Asi takvimi', iconBg: 'bg-tertiary-container/20', iconColor: 'text-tertiary' },
     { path: '/baby-face', icon: 'child_care', title: 'Bebek Yuzu', desc: 'Buyuyunce', iconBg: 'bg-secondary-container/40', iconColor: 'text-secondary' },
+    { path: '/lullabies', icon: 'music_note', title: 'Ninniler', desc: 'Uyku sesleri', iconBg: 'bg-secondary-container/40', iconColor: 'text-secondary' },
+    { path: '/stories', icon: 'auto_stories', title: 'Masallar', desc: 'Uyku hikayeleri', iconBg: 'bg-tertiary-container/20', iconColor: 'text-tertiary' },
+    { path: '/child-guide', icon: 'school', title: 'Cocuk Rehberi', desc: '1-6 yas', iconBg: 'bg-primary-fixed/20', iconColor: 'text-primary' },
   ],
   planner: [
     { path: '/cost-calculator', icon: 'savings', title: 'Maliyet', desc: 'Butce planlayin', iconBg: 'bg-primary-fixed/20', iconColor: 'text-primary' },
