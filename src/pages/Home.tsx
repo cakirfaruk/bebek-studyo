@@ -75,6 +75,27 @@ function getSizeComparison(week: number): string {
   return 'Karpuz'
 }
 
+function getSizeEmoji(week: number): string {
+  if (week <= 6) return '🫘'
+  if (week <= 8) return '🫐'
+  if (week <= 10) return '🫒'
+  if (week <= 12) return '🍋'
+  if (week <= 14) return '🍋'
+  if (week <= 16) return '🥑'
+  if (week <= 18) return '🍎'
+  if (week <= 20) return '🍌'
+  if (week <= 22) return '🥭'
+  if (week <= 24) return '🌽'
+  if (week <= 26) return '🥒'
+  if (week <= 28) return '🍆'
+  if (week <= 30) return '🥥'
+  if (week <= 32) return '🍍'
+  if (week <= 34) return '🍈'
+  if (week <= 36) return '🥭'
+  if (week <= 38) return '🎃'
+  return '🍉'
+}
+
 export default function Home() {
   const navigate = useNavigate()
   const { profile, segment } = useStore()
@@ -93,35 +114,39 @@ export default function Home() {
     <MobileLayout>
       <div className="space-y-10">
 
-        {/* ── Section 1: Week Indicator with Circular Progress Ring ── */}
+        {/* ── Hero Section: Weekly Progress ── */}
         {segment === 'expecting' && week ? (
           <motion.section
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             className="relative"
           >
+            <div className="absolute -top-12 -right-8 w-64 h-64 bg-primary-fixed/20 rounded-full blur-[80px] -z-10"></div>
+            <div className="absolute -bottom-8 -left-8 w-48 h-48 bg-secondary-container/30 rounded-full blur-[60px] -z-10"></div>
+
             <div className="flex flex-col items-center text-center space-y-6">
               {/* Circular Progress Assembly */}
               <div className="relative w-72 h-72 flex items-center justify-center">
                 {/* SVG Progress Circle */}
                 <svg className="absolute inset-0 w-full h-full -rotate-90 transform" viewBox="0 0 100 100">
                   <circle
-                    className="progress-ring-track"
+                    className="text-surface-highest"
                     cx="50" cy="50" r={radius}
-                    strokeWidth="6"
+                    fill="transparent"
                     stroke="currentColor"
-                    style={{ color: 'var(--color-surface-highest)' }}
+                    strokeWidth="6"
                   />
                   <circle
-                    className="progress-ring-fill"
                     cx="50" cy="50" r={radius}
-                    strokeWidth="6"
-                    stroke="url(#gradientRing)"
+                    fill="transparent"
+                    stroke="url(#paint0_linear)"
                     strokeDasharray={circumference}
                     strokeDashoffset={strokeDashoffset}
+                    strokeLinecap="round"
+                    strokeWidth="6"
                   />
                   <defs>
-                    <linearGradient id="gradientRing" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="100" y2="100">
+                    <linearGradient id="paint0_linear" gradientUnits="userSpaceOnUse" x1="0" x2="100" y1="0" y2="100">
                       <stop stopColor="#ba0961" />
                       <stop offset="1" stopColor="#6834eb" />
                     </linearGradient>
@@ -138,16 +163,15 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Floating Size Comparison Card */}
-                <div className="absolute -right-2 -bottom-2 w-28 h-28 bg-white rounded-xl shadow-xl flex flex-col items-center justify-center p-2 transform rotate-6 border border-white/50 backdrop-blur-sm">
-                  <span className="text-3xl mb-1">🍋</span>
-                  <span className="text-[10px] font-display font-bold text-primary uppercase tracking-tight text-center leading-tight">
+                {/* Visual Metaphor: Floating Illustration */}
+                <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-white rounded-2xl shadow-xl flex flex-col items-center justify-center p-3 transform rotate-6 border border-white/50 backdrop-blur-sm">
+                  <span className="text-5xl mb-1">{getSizeEmoji(week)}</span>
+                  <span className="text-[10px] font-display font-bold text-primary uppercase tracking-tighter">
                     {getSizeComparison(week)}
                   </span>
                 </div>
               </div>
 
-              {/* Description below ring */}
               <div className="space-y-2">
                 <h2 className="text-2xl font-display font-bold text-on-surface">
                   Merhaba, {greetingName}!
@@ -178,64 +202,131 @@ export default function Home() {
           </motion.section>
         )}
 
-        {/* ── Section 2: Quick Action Icons ── */}
+        {/* ── Quick Actions ── */}
         <motion.section
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
           className="grid grid-cols-3 gap-4"
         >
-          {[
-            { icon: 'monitor_weight', label: 'Kilo', bg: 'bg-primary-container/20', color: 'text-primary', hoverBg: 'group-hover:bg-primary group-hover:text-on-primary' },
-            { icon: 'mood', label: 'Ruh Hali', bg: 'bg-secondary-container/40', color: 'text-secondary', hoverBg: 'group-hover:bg-secondary group-hover:text-on-secondary' },
-            { icon: 'water_drop', label: 'Su', bg: 'bg-tertiary-container/20', color: 'text-tertiary', hoverBg: 'group-hover:bg-tertiary group-hover:text-on-tertiary' },
-          ].map((action) => (
-            <button
-              key={action.icon}
-              className="flex flex-col items-center gap-3 p-4 rounded-xl bg-surface-lowest shadow-sm hover:shadow-md transition-shadow active:scale-95 group"
-            >
-              <div className={`w-12 h-12 rounded-full ${action.bg} flex items-center justify-center ${action.color} ${action.hoverBg} transition-colors`}>
-                <span className="material-symbols-outlined">{action.icon}</span>
-              </div>
-              <span className="font-body text-xs font-semibold text-on-surface-variant">{action.label}</span>
-            </button>
-          ))}
+          <button className="flex flex-col items-center gap-3 p-4 rounded-lg bg-surface-lowest shadow-sm hover:shadow-md transition-shadow active:scale-95 group">
+            <div className="w-12 h-12 rounded-full bg-primary-container/20 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+              <span className="material-symbols-outlined">monitor_weight</span>
+            </div>
+            <span className="font-body text-xs font-semibold text-on-surface-variant">Kilo</span>
+          </button>
+          <button className="flex flex-col items-center gap-3 p-4 rounded-lg bg-surface-lowest shadow-sm hover:shadow-md transition-shadow active:scale-95 group">
+            <div className="w-12 h-12 rounded-full bg-secondary-container/40 flex items-center justify-center text-secondary group-hover:bg-secondary group-hover:text-on-secondary transition-colors">
+              <span className="material-symbols-outlined">mood</span>
+            </div>
+            <span className="font-body text-xs font-semibold text-on-surface-variant">Ruh Hali</span>
+          </button>
+          <button className="flex flex-col items-center gap-3 p-4 rounded-lg bg-surface-lowest shadow-sm hover:shadow-md transition-shadow active:scale-95 group">
+            <div className="w-12 h-12 rounded-full bg-tertiary-container/20 flex items-center justify-center text-tertiary group-hover:bg-tertiary group-hover:text-on-tertiary transition-colors">
+              <span className="material-symbols-outlined">water_drop</span>
+            </div>
+            <span className="font-body text-xs font-semibold text-on-surface-variant">Su</span>
+          </button>
         </motion.section>
 
-        {/* ── Section 3: Growth Visualization Card ── */}
+        {/* ── Bento Layout: Daily Tip & Next Milestone ── */}
+        <motion.section
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+        >
+          {/* Daily Tip Card */}
+          <div className="relative overflow-hidden group bg-gradient-to-br from-secondary to-secondary-dim p-6 rounded-lg shadow-lg">
+            <div className="absolute top-0 right-0 p-4 opacity-20">
+              <span className="material-symbols-outlined text-6xl text-on-secondary">lightbulb</span>
+            </div>
+            <div className="relative z-10 space-y-4">
+              <div className="inline-flex items-center px-2 py-1 bg-white/20 backdrop-blur-md rounded-md">
+                <span className="text-[10px] font-display font-bold text-on-secondary uppercase">Gunun Ipucu</span>
+              </div>
+              <h3 className="text-lg font-display font-bold text-on-secondary leading-tight">
+                {segment === 'expecting' ? 'Hidrasyon Enerji Icin Anahtar'
+                  : segment === 'dreaming' ? 'Birlikte Hayal Kurun'
+                  : segment === 'newparent' ? 'Goz Temasi Kurun'
+                  : 'Folik Asit Takviyesi'}
+              </h3>
+              <p className="text-on-secondary/80 text-sm leading-relaxed">
+                {segment === 'expecting'
+                  ? 'Gunde en az 8 bardak su icmeyi unutmayin. Hidrasyon hem sizin hem bebeginiz icin cok onemli.'
+                  : segment === 'dreaming'
+                  ? 'Birlikte hayal kurmak iliskinizi guclendirir. Bu aksam bebek isimleri hakkinda sohbet edin.'
+                  : segment === 'newparent'
+                  ? 'Bebeginizle goz temasi kurun — bu onun sosyal gelisimi icin harika bir egzersiz.'
+                  : 'Folik asit takviyesine hamilelikten 3 ay once baslamak ideal.'}
+              </p>
+              <button className="mt-2 px-4 py-2 bg-surface-lowest/20 hover:bg-surface-lowest/30 text-on-secondary text-xs font-bold rounded-full transition-all flex items-center gap-2">
+                Devamini Oku <span className="material-symbols-outlined text-sm">arrow_forward</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Next Milestone Card */}
+          <div className="bg-surface-lowest p-6 rounded-lg shadow-sm border border-outline-variant/10 space-y-4">
+            <div className="flex justify-between items-start">
+              <div className="space-y-1">
+                <span className="text-primary font-display font-bold text-xs uppercase tracking-wider">Sonraki Kilometre Tasi</span>
+                <h3 className="text-lg font-display font-bold text-on-surface">NT Ultrasonu</h3>
+              </div>
+              <div className="bg-primary-container/20 p-2 rounded-lg">
+                <span className="material-symbols-outlined text-primary">calendar_month</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 py-3 border-y border-surface-mid">
+              <div className="text-center">
+                <span className="block text-xl font-display font-black text-on-surface">14</span>
+                <span className="text-[10px] font-body font-bold text-on-surface-variant uppercase">Eki</span>
+              </div>
+              <div className="h-8 w-[1px] bg-surface-highest"></div>
+              <div>
+                <span className="block text-sm font-body font-bold text-on-surface">Klinik Randevusu</span>
+                <span className="text-xs text-on-surface-variant">09:30 - 4 gun kaldi</span>
+              </div>
+            </div>
+            <button className="w-full py-3 bg-surface-mid text-on-surface text-sm font-bold rounded-lg hover:bg-surface-high transition-colors">
+              Takvime Ekle
+            </button>
+          </div>
+        </motion.section>
+
+        {/* ── Fetus Visualization Section ── */}
         {segment === 'expecting' && week && (
           <motion.section
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="glass-card p-8 overflow-hidden relative"
-            style={{ background: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.6)' }}
+            transition={{ delay: 0.15 }}
+            className="bg-white/40 backdrop-blur-xl p-8 rounded-lg border border-white/60 shadow-xl overflow-hidden relative"
           >
-            <div className="relative z-10 flex flex-col items-center gap-6">
-              <div className="w-32 h-32 relative">
-                <div className="absolute inset-0 bg-primary-fixed/30 rounded-full animate-pulse" />
+            <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
+              <div className="w-40 h-40 relative">
+                <div className="absolute inset-0 bg-primary-fixed/30 rounded-full animate-pulse"></div>
                 <div className="w-full h-full rounded-full bg-gradient-to-br from-primary-fixed/50 to-secondary-container/50 flex items-center justify-center border-4 border-white shadow-inner">
                   <span className="text-5xl">👶</span>
                 </div>
               </div>
-              <div className="flex-1 space-y-3 text-center">
+              <div className="flex-1 space-y-3">
                 <h3 className="text-xl font-display font-bold text-on-surface">Gelisim Gorsellestirmesi</h3>
                 <p className="text-on-surface-variant text-sm leading-relaxed italic">
                   Bebeginiz {getSizeComparison(week).toLowerCase()} buyuklugunde ve her gun buyumeye devam ediyor.
                 </p>
-                <div className="flex gap-2 pt-2 justify-center">
-                  <div className="h-1.5 w-16 rounded-full" style={{ background: 'var(--color-primary)' }} />
-                  <div className="h-1.5 w-16 rounded-full bg-surface-highest" />
-                  <div className="h-1.5 w-16 rounded-full bg-surface-highest" />
+                <div className="flex gap-2 pt-2">
+                  <div className="h-1.5 w-16 bg-primary rounded-full"></div>
+                  <div className="h-1.5 w-16 bg-surface-highest rounded-full"></div>
+                  <div className="h-1.5 w-16 bg-surface-highest rounded-full"></div>
                 </div>
               </div>
             </div>
-            {/* Decorative ring */}
-            <div className="absolute -right-20 -bottom-20 w-64 h-64 border-[32px] border-primary/5 rounded-full" />
+            {/* Decorative Background Element */}
+            <div className="absolute -right-20 -bottom-20 w-64 h-64 border-[32px] border-primary/5 rounded-full"></div>
           </motion.section>
         )}
 
-        {/* ── Section 3b: Dreaming Hero ── */}
+        {/* ── Dreaming Hero ── */}
         {segment === 'dreaming' && (
           <motion.section
             initial={{ opacity: 0, y: 10 }}
@@ -265,45 +356,7 @@ export default function Home() {
           </motion.section>
         )}
 
-        {/* ── Section 4: Daily Tips Card ── */}
-        <motion.section
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-        >
-          <div className="relative overflow-hidden group rounded-xl p-6 shadow-lg"
-            style={{ background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-dim))' }}
-          >
-            <div className="absolute top-0 right-0 p-4 opacity-20">
-              <span className="material-symbols-outlined text-6xl text-on-secondary">lightbulb</span>
-            </div>
-            <div className="relative z-10 space-y-4">
-              <div className="inline-flex items-center px-2 py-1 bg-white/20 backdrop-blur-md rounded-lg">
-                <span className="text-[10px] font-display font-bold text-white uppercase">Gunun Ipucu</span>
-              </div>
-              <h3 className="text-lg font-display font-bold text-white leading-tight">
-                {segment === 'expecting' ? 'Hidrasyon Enerji Icin Anahtar'
-                  : segment === 'dreaming' ? 'Birlikte Hayal Kurun'
-                  : segment === 'newparent' ? 'Goz Temasi Kurun'
-                  : 'Folik Asit Takviyesi'}
-              </h3>
-              <p className="text-white/80 text-sm leading-relaxed">
-                {segment === 'expecting'
-                  ? 'Gunde en az 8 bardak su icmeyi unutmayin. Hidrasyon hem sizin hem bebeginiz icin cok onemli.'
-                  : segment === 'dreaming'
-                  ? 'Birlikte hayal kurmak iliskinizi guclendirir. Bu aksam bebek isimleri hakkinda sohbet edin.'
-                  : segment === 'newparent'
-                  ? 'Bebeginizle goz temasi kurun — bu onun sosyal gelisimi icin harika bir egzersiz.'
-                  : 'Folik asit takviyesine hamilelikten 3 ay once baslamak ideal.'}
-              </p>
-              <button className="mt-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white text-xs font-bold rounded-full transition-all flex items-center gap-2">
-                Devamini Oku <span className="material-symbols-outlined text-sm">arrow_forward</span>
-              </button>
-            </div>
-          </div>
-        </motion.section>
-
-        {/* ── Section 5: Feature Grid Cards ── */}
+        {/* ── Feature Grid Cards ── */}
         <motion.section
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

@@ -1,34 +1,15 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Camera, Wand2, Download, Share2, ChevronLeft, ChevronRight, Palette, Sparkles } from 'lucide-react'
 import { MobileLayout } from '@/components/layout/MobileLayout'
 import { useStore } from '@/stores/useStore'
 import { generateBabyImage } from '@/lib/ai'
 import { toast } from 'sonner'
 
-const styles = [
-  { id: 'realistic' as const, label: 'Gerçekçi', emoji: '📸', desc: 'Fotoğraf kalitesi' },
-  { id: 'soft' as const, label: 'Yumuşak', emoji: '🎨', desc: 'Rüya gibi' },
-  { id: 'artistic' as const, label: 'Sanatsal', emoji: '🖼️', desc: 'Sulu boya' },
-]
-
-const ages = [
-  { value: 0, label: 'Yenidoğan' },
-  { value: 1, label: '1 Yaş' },
-  { value: 3, label: '3 Yaş' },
-  { value: 5, label: '5 Yaş' },
-  { value: 7, label: '7 Yaş' },
-  { value: 10, label: '10 Yaş' },
-  { value: 14, label: '14 Yaş' },
-  { value: 18, label: '18 Yaş' },
-  { value: 25, label: '25 Yaş' },
-]
+const ageLabels = ['Yenidogan', '1Y', '2Y', '3Y', '4Y', '5Y']
 
 export default function BabyFace() {
   const { profile, updateProfile } = useStore()
-  const [selectedStyle, setSelectedStyle] = useState<'realistic' | 'soft' | 'artistic'>('realistic')
-  const [selectedAge, setSelectedAge] = useState(0)
-  const [selectedGender, setSelectedGender] = useState<'boy' | 'girl'>(profile?.babyGender === 'girl' ? 'girl' : 'boy')
+  const [selectedAge, setSelectedAge] = useState(2)
   const [generating, setGenerating] = useState(false)
   const [generatedImages, setGeneratedImages] = useState<Record<string, string>>({})
   const [motherPhoto, setMotherPhoto] = useState(profile?.motherPhoto || '')
@@ -60,7 +41,7 @@ export default function BabyFace() {
 
   const handleGenerate = async () => {
     if (!motherPhoto || !fatherPhoto) {
-      toast.error('Lütfen her iki fotoğrafı da yükleyin')
+      toast.error('Lutfen her iki fotografi da yukleyin')
       return
     }
 
@@ -69,220 +50,212 @@ export default function BabyFace() {
       const imageUrl = await generateBabyImage({
         motherPhotoUrl: motherPhoto,
         fatherPhotoUrl: fatherPhoto,
-        gender: selectedGender,
-        age: ages[selectedAge].value,
-        style: selectedStyle,
+        gender: 'boy',
+        age: selectedAge,
+        style: 'realistic',
       })
-      const key = `${selectedGender}-${ages[selectedAge].value}-${selectedStyle}`
+      const key = `baby-${selectedAge}`
       setGeneratedImages((prev) => ({ ...prev, [key]: imageUrl }))
-      toast.success('Bebek görseli oluşturuldu!')
+      toast.success('Bebek gorseli olusturuldu!')
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Görsel oluşturulamadı')
+      toast.error(err instanceof Error ? err.message : 'Gorsel olusturulamadi')
     } finally {
       setGenerating(false)
     }
   }
 
-  const currentKey = `${selectedGender}-${ages[selectedAge].value}-${selectedStyle}`
+  const currentKey = `baby-${selectedAge}`
   const currentImage = generatedImages[currentKey]
 
   return (
-    <MobileLayout title="Bebek Yüzü" showBack>
-      <div className="py-4">
-        {/* Parent Photos */}
-        <div className="grid grid-cols-2 gap-3 mb-6">
-          {(['mother', 'father'] as const).map((type) => {
-            const photo = type === 'mother' ? motherPhoto : fatherPhoto
-            return (
-              <button
-                key={type}
-                onClick={() => handlePhotoUpload(type)}
-                className="aspect-square rounded-2xl border-2 border-dashed border-white/50 hover:border-primary-400 glass-card flex flex-col items-center justify-center gap-2 transition-all overflow-hidden relative"
-              >
-                {photo ? (
-                  <>
-                    <img src={photo} alt={type} className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-black/0 hover:bg-black/20 transition-colors flex items-center justify-center">
-                      <Camera className="w-6 h-6 text-white opacity-0 hover:opacity-100 transition-opacity" />
-                    </div>
-                    <span className="absolute bottom-2 left-2 text-xs bg-black/50 text-white px-2 py-0.5 rounded-full">
-                      {type === 'mother' ? '👩 Anne' : '👨 Baba'}
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <div className="w-14 h-14 rounded-full bg-primary-50 flex items-center justify-center">
-                      <Camera className="w-6 h-6 text-primary-400" />
-                    </div>
-                    <span className="text-xs text-warm-muted font-medium">
-                      {type === 'mother' ? 'Anne Fotoğrafı' : 'Baba Fotoğrafı'}
-                    </span>
-                  </>
-                )}
-              </button>
-            )
-          })}
-        </div>
+    <MobileLayout title="Bebek Yuzu" showBack>
+      {/* Hero Section */}
+      <section className="mb-10 text-center">
+        <h1 className="font-display text-4xl font-extrabold text-on-surface tracking-tight mb-4">
+          Hayalinizdeki <span className="text-primary italic">Bebegi Gorun</span>
+        </h1>
+        <p className="text-on-surface-variant text-lg max-w-xl mx-auto">
+          Her iki dunyanin en iyisini harmanlayarak gelecekteki mucizenizi gorsellestirin.
+        </p>
+      </section>
 
-        {/* Gender Selection */}
-        <div className="flex gap-2 mb-4">
-          {[
-            { value: 'girl' as const, emoji: '👧', label: 'Kız' },
-            { value: 'boy' as const, emoji: '👦', label: 'Erkek' },
-          ].map((g) => (
-            <button
-              key={g.value}
-              onClick={() => setSelectedGender(g.value)}
-              className={`flex-1 h-12 rounded-xl flex items-center justify-center gap-2 font-medium text-sm transition-all ${
-                selectedGender === g.value
-                  ? 'gradient-primary text-white shadow-glow-primary'
-                  : 'glass-card text-warm-text'
-              }`}
-            >
-              <span>{g.emoji}</span>
-              {g.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Style Selection */}
-        <div className="flex gap-2 mb-4">
-          {styles.map((s) => (
-            <button
-              key={s.id}
-              onClick={() => setSelectedStyle(s.id)}
-              className={`flex-1 py-3 rounded-xl flex flex-col items-center gap-1 transition-all ${
-                selectedStyle === s.id
-                  ? 'bg-secondary-500 text-white shadow-glow-secondary'
-                  : 'glass-card text-warm-text'
-              }`}
-            >
-              <span className="text-lg">{s.emoji}</span>
-              <span className="text-xs font-medium">{s.label}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Age Slider */}
-        <div className="glass-card p-4 mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-medium text-warm-text flex items-center gap-1.5">
-              <Palette className="w-4 h-4 text-secondary-500" />
-              Yaş: {ages[selectedAge].label}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setSelectedAge(Math.max(0, selectedAge - 1))}
-              className="w-8 h-8 rounded-full bg-warm-surface flex items-center justify-center"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <div className="flex-1 flex gap-1">
-              {ages.map((a, i) => (
-                <button
-                  key={a.value}
-                  onClick={() => setSelectedAge(i)}
-                  className={`flex-1 h-2 rounded-full transition-all ${
-                    i === selectedAge ? 'bg-secondary-500 scale-y-150' : i < selectedAge ? 'bg-secondary-200' : 'bg-warm-border'
-                  }`}
-                />
-              ))}
+      {/* Main Workspace: Bento Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+        {/* Left Column: Uploads */}
+        <div className="md:col-span-4 flex flex-col gap-6">
+          {/* Parent A */}
+          <div className="bg-surface-container-lowest glass-card p-6 rounded-lg shadow-sm">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="material-symbols-outlined text-primary">face</span>
+              <h3 className="font-display font-bold text-on-surface">Ebeveyn 1</h3>
             </div>
-            <button
-              onClick={() => setSelectedAge(Math.min(ages.length - 1, selectedAge + 1))}
-              className="w-8 h-8 rounded-full bg-warm-surface flex items-center justify-center"
+            <div
+              onClick={() => handlePhotoUpload('father')}
+              className="relative group cursor-pointer aspect-square rounded-lg overflow-hidden border-2 border-dashed border-outline-variant/30 hover:border-primary/50 transition-colors bg-surface-container"
             >
-              <ChevronRight className="w-4 h-4" />
-            </button>
+              {fatherPhoto ? (
+                <img src={fatherPhoto} alt="Baba" className="absolute inset-0 w-full h-full object-cover" />
+              ) : (
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-on-surface-variant gap-2">
+                  <span className="material-symbols-outlined text-3xl">add_a_photo</span>
+                  <span className="text-xs font-semibold uppercase tracking-wider">Foto Yukle</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Parent B */}
+          <div className="bg-surface-container-lowest glass-card p-6 rounded-lg shadow-sm">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="material-symbols-outlined text-secondary">face_3</span>
+              <h3 className="font-display font-bold text-on-surface">Ebeveyn 2</h3>
+            </div>
+            <div
+              onClick={() => handlePhotoUpload('mother')}
+              className="relative group cursor-pointer aspect-square rounded-lg overflow-hidden border-2 border-dashed border-outline-variant/30 hover:border-primary/50 transition-colors bg-surface-container"
+            >
+              {motherPhoto ? (
+                <img src={motherPhoto} alt="Anne" className="absolute inset-0 w-full h-full object-cover" />
+              ) : (
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-on-surface-variant gap-2">
+                  <span className="material-symbols-outlined text-3xl">add_a_photo</span>
+                  <span className="text-xs font-semibold uppercase tracking-wider">Foto Yukle</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Generate Button */}
-        <button
-          onClick={handleGenerate}
-          disabled={generating || !motherPhoto || !fatherPhoto}
-          className="w-full h-14 rounded-2xl gradient-primary text-white font-semibold flex items-center justify-center gap-2 shadow-glow-primary active:scale-[0.98] transition-transform disabled:opacity-50 mb-6"
-        >
-          {generating ? (
-            <>
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              Oluşturuluyor...
-            </>
-          ) : (
-            <>
-              <Wand2 className="w-5 h-5" />
-              Bebek Yüzü Oluştur
-              <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">1 Kredi</span>
-            </>
-          )}
-        </button>
+        {/* Right Column: Generation Preview */}
+        <div className="md:col-span-8 flex flex-col gap-6">
+          {/* Preview Canvas */}
+          <div className="relative bg-surface-container-lowest glass-card p-8 rounded-lg shadow-2xl overflow-hidden min-h-[400px] flex flex-col items-center justify-center">
+            {/* Decorative blurs */}
+            <div className="absolute -top-12 -right-12 w-48 h-48 bg-primary/10 rounded-full blur-3xl" />
+            <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-secondary/10 rounded-full blur-3xl" />
 
-        {/* Result */}
-        <AnimatePresence>
-          {currentImage && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="glass-card overflow-hidden shadow-card"
-            >
-              <div className="aspect-square bg-warm-surface">
-                <img src={currentImage} alt="Bebek tahmini" className="w-full h-full object-cover" />
-              </div>
-              <div className="p-4 flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold text-sm text-warm-text">
-                    {selectedGender === 'girl' ? '👧 Kız' : '👦 Erkek'} - {ages[selectedAge].label}
-                  </h3>
-                  <p className="text-xs text-warm-muted">{styles.find((s) => s.id === selectedStyle)?.label} stil</p>
-                </div>
-                <div className="flex gap-2">
-                  <button className="w-10 h-10 rounded-xl bg-warm-surface flex items-center justify-center hover:bg-warm-border transition-colors">
-                    <Download className="w-5 h-5 text-warm-text" />
-                  </button>
-                  <button className="w-10 h-10 rounded-xl bg-warm-surface flex items-center justify-center hover:bg-warm-border transition-colors">
-                    <Share2 className="w-5 h-5 text-warm-text" />
-                  </button>
+            <div className="relative z-10 w-full flex flex-col items-center">
+              {/* Preview Circle */}
+              <div className="w-64 h-64 md:w-80 md:h-80 rounded-full p-2 bg-gradient-to-tr from-primary/20 via-surface-container-lowest to-secondary/20 shadow-xl mb-8">
+                <div className="w-full h-full rounded-full overflow-hidden bg-surface-container-high relative">
+                  {currentImage ? (
+                    <img src={currentImage} alt="AI Bebek Onizleme" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-6xl">
+                      👶
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-white/40 to-transparent" />
                 </div>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
-        {/* Gallery of generated images */}
+              {/* Age Selection */}
+              <div className="w-full max-w-sm mb-8 px-4">
+                <div className="flex justify-between items-center mb-4">
+                  <label className="font-display font-bold text-on-surface flex items-center gap-2">
+                    <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>cake</span>
+                    Yas Secin
+                  </label>
+                  <span className="bg-primary-container text-on-primary-container px-3 py-1 rounded-full text-xs font-bold">
+                    {selectedAge === 0 ? 'Yenidogan' : `${selectedAge} Yas`}
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="5"
+                  step="1"
+                  value={selectedAge}
+                  onChange={(e) => setSelectedAge(Number(e.target.value))}
+                  className="w-full h-2 bg-surface-container-highest rounded-full appearance-none cursor-pointer accent-primary"
+                />
+                <div className="flex justify-between mt-2 text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">
+                  {ageLabels.map((label) => (
+                    <span key={label}>{label}</span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Generate Button */}
+              <button
+                onClick={handleGenerate}
+                disabled={generating || !motherPhoto || !fatherPhoto}
+                className="group relative px-12 py-5 rounded-full bg-gradient-to-r from-secondary to-secondary-dim text-on-secondary font-display font-bold text-lg shadow-[0_20px_40px_rgba(104,52,235,0.3)] hover:scale-105 active:scale-95 transition-all duration-300 disabled:opacity-50"
+              >
+                <div className="absolute inset-0 rounded-full bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
+                <span className="flex items-center gap-3">
+                  {generating ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Olusturuluyor...
+                    </>
+                  ) : (
+                    <>
+                      <span className="material-symbols-outlined">auto_awesome</span>
+                      Sihir Olustur
+                    </>
+                  )}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Features/Tools Bento Pieces */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-surface-container-low p-5 rounded-lg flex items-center gap-4 group cursor-pointer hover:bg-white transition-colors">
+              <div className="w-12 h-12 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container">
+                <span className="material-symbols-outlined">palette</span>
+              </div>
+              <div>
+                <p className="font-display font-bold text-sm">Stil Filtresi</p>
+                <p className="text-xs text-on-surface-variant">Editoryal Parlama</p>
+              </div>
+            </div>
+            <div className="bg-surface-container-low p-5 rounded-lg flex items-center gap-4 group cursor-pointer hover:bg-white transition-colors">
+              <div className="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+                <span className="material-symbols-outlined">download</span>
+              </div>
+              <div>
+                <p className="font-display font-bold text-sm">HD Aktar</p>
+                <p className="text-xs text-on-surface-variant">Baskiya Hazir</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Gallery of generated images */}
+      <AnimatePresence>
         {Object.keys(generatedImages).length > 1 && (
-          <div className="mt-6">
-            <h3 className="font-semibold text-sm text-warm-text mb-3 flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-accent-500" />
-              Galeri ({Object.keys(generatedImages).length} görsel)
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-8"
+          >
+            <h3 className="font-display font-bold text-on-surface mb-4 flex items-center gap-2">
+              <span className="material-symbols-outlined text-primary">collections</span>
+              Galeri ({Object.keys(generatedImages).length} gorsel)
             </h3>
             <div className="grid grid-cols-3 gap-2">
               {Object.entries(generatedImages).map(([key, url]) => (
                 <button
                   key={key}
-                  onClick={() => {
-                    const [g, a, s] = key.split('-')
-                    setSelectedGender(g as 'boy' | 'girl')
-                    setSelectedAge(ages.findIndex((age) => age.value === parseInt(a)))
-                    setSelectedStyle(s as 'realistic' | 'soft' | 'artistic')
-                  }}
                   className={`aspect-square rounded-xl overflow-hidden border-2 transition-all ${
-                    key === currentKey ? 'border-primary-500' : 'border-warm-border'
+                    key === currentKey ? 'border-primary' : 'border-outline-variant/30'
                   }`}
                 >
                   <img src={url} alt="" className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>
-          </div>
+          </motion.div>
         )}
+      </AnimatePresence>
 
-        {/* Info */}
-        <p className="text-[10px] text-warm-muted/60 text-center mt-6 px-4">
-          AI tarafından oluşturulan görseller eğlence amaçlıdır ve gerçek sonuçları garanti etmez.
-        </p>
-      </div>
+      {/* Info */}
+      <p className="text-[10px] text-on-surface-variant/60 text-center mt-6 px-4">
+        AI tarafindan olusturulan gorseller eglence amaclidir ve gercek sonuclari garanti etmez.
+      </p>
     </MobileLayout>
   )
 }

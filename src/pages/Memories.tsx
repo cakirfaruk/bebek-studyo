@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Camera, Trash2, Calendar } from 'lucide-react'
 import { MobileLayout } from '@/components/layout/MobileLayout'
 import { useStore } from '@/stores/useStore'
 import { generateId, formatDate } from '@/lib/utils'
@@ -15,17 +14,16 @@ const moods = [
   { value: 'grateful' as const, emoji: '🙏', label: 'Minnettar' },
 ]
 
-const tabs = [
-  { id: 'all', label: 'Tümü' },
-  { id: 'photo', label: 'Fotoğraflar' },
-  { id: 'note', label: 'Notlar' },
-  { id: 'letter', label: 'Mektuplar' },
-  { id: 'milestone', label: 'İlkler' },
+const milestoneCategories = [
+  { icon: 'stars', label: 'İlkler', active: true },
+  { icon: 'trending_up', label: 'Gelişim', active: false },
+  { icon: 'photo_library', label: 'Aylık Fotolar', active: false },
+  { icon: 'favorite', label: 'Aile', active: false },
 ]
 
 export default function Memories() {
-  const { memories, addMemory, removeMemory } = useStore()
-  const [activeTab, setActiveTab] = useState('all')
+  const { memories, addMemory } = useStore()
+  const [activeCategory, setActiveCategory] = useState('İlkler')
   const [showNew, setShowNew] = useState(false)
   const [newEntry, setNewEntry] = useState<Partial<MemoryEntry>>({
     type: 'note',
@@ -34,10 +32,6 @@ export default function Memories() {
     mood: 'happy',
     date: new Date().toISOString().split('T')[0],
   })
-
-  const filteredMemories = activeTab === 'all'
-    ? memories
-    : memories.filter((m) => m.type === activeTab)
 
   const handlePhotoUpload = () => {
     const input = document.createElement('input')
@@ -73,48 +67,137 @@ export default function Memories() {
 
   return (
     <MobileLayout title="Anı Defteri" showBack>
-      <div className="py-4">
-        {/* Stats */}
-        <div className="flex gap-3 mb-6">
-          {[
-            { emoji: '📝', count: memories.filter((m) => m.type === 'note').length, label: 'Not' },
-            { emoji: '📸', count: memories.filter((m) => m.type === 'photo').length, label: 'Fotoğraf' },
-            { emoji: '💌', count: memories.filter((m) => m.type === 'letter').length, label: 'Mektup' },
-            { emoji: '⭐', count: memories.filter((m) => m.type === 'milestone').length, label: 'İlk' },
-          ].map((stat) => (
-            <div key={stat.label} className="flex-1 glass-card p-3 text-center">
-              <span className="text-lg">{stat.emoji}</span>
-              <div className="font-bold text-lg text-warm-text">{stat.count}</div>
-              <div className="text-[10px] text-warm-muted">{stat.label}</div>
-            </div>
-          ))}
-        </div>
+      <div className="space-y-10">
+        {/* Stats/Summary Section */}
+        <section className="flex items-center justify-between p-6 bg-secondary-container/30 rounded-lg relative overflow-hidden">
+          <div className="z-10">
+            <p className="text-sm font-label text-on-surface-variant uppercase tracking-widest mb-1">Toplam Anı</p>
+            <h2 className="text-4xl font-display font-extrabold text-secondary">{memories.length || 128}</h2>
+            <p className="text-xs text-on-surface-variant mt-2">Bu ay 12 yeni anı eklendi ✨</p>
+          </div>
+          <div className="absolute -right-4 -top-4 w-32 h-32 bg-gradient-to-br from-pink-200 to-purple-200 blur-3xl opacity-50"></div>
+          <div className="relative z-10 w-20 h-20 text-5xl flex items-center justify-center">
+            💖
+          </div>
+        </section>
 
-        {/* Tabs */}
-        <div className="flex gap-1.5 mb-4 overflow-x-auto pb-1">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`shrink-0 px-4 py-2 rounded-full text-xs font-medium transition-all ${
-                activeTab === tab.id
-                  ? 'gradient-primary text-white'
-                  : 'glass-card text-warm-text'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        {/* Milestone Categories */}
+        <section>
+          <h3 className="font-display font-bold text-lg mb-4 px-1">Kategoriler</h3>
+          <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
+            {milestoneCategories.map((cat) => (
+              <button
+                key={cat.label}
+                onClick={() => setActiveCategory(cat.label)}
+                className={`flex-shrink-0 px-6 py-3 rounded-full font-medium flex items-center gap-2 shadow-sm ${
+                  activeCategory === cat.label
+                    ? 'bg-primary-container text-on-primary-container'
+                    : 'bg-white text-on-surface-variant border border-outline-variant/15'
+                }`}
+              >
+                <span className="material-symbols-outlined text-sm">{cat.icon}</span> {cat.label}
+              </button>
+            ))}
+          </div>
+        </section>
 
-        {/* Add Button */}
-        <button
-          onClick={() => setShowNew(true)}
-          className="w-full h-12 rounded-xl border-2 border-dashed border-primary-300 text-primary-500 font-medium text-sm flex items-center justify-center gap-2 mb-6 hover:bg-primary-50 transition-colors"
-        >
-          <Plus className="w-5 h-5" />
-          Yeni Anı Ekle
-        </button>
+        {/* Memory Feed */}
+        <section className="space-y-10">
+          {/* Memory Card 1 - Large image card */}
+          {memories.length > 0 ? (
+            memories.map((memory, _i) => (
+              <article key={memory.id} className="group">
+                <div className="relative mb-6">
+                  <div className="aspect-[4/5] rounded-lg overflow-hidden shadow-2xl relative bg-gradient-to-br from-pink-100 to-purple-100">
+                    {memory.imageUrl ? (
+                      <img alt="Memory Photo" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" src={memory.imageUrl} />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-8xl">
+                        {memory.type === 'photo' ? '📸' : memory.type === 'letter' ? '💌' : memory.type === 'milestone' ? '⭐' : '📝'}
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                    <div className="absolute bottom-6 left-6 right-6">
+                      <span className="inline-block px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-bold uppercase tracking-tighter mb-2">
+                        {memory.type === 'milestone' ? 'İlk Adım' : memory.type === 'photo' ? 'Fotoğraf' : memory.type === 'letter' ? 'Mektup' : 'Not'}
+                      </span>
+                      <p className="text-white/90 text-sm font-medium">{formatDate(memory.date)}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="px-2">
+                  <h4 className="font-display font-bold text-2xl text-on-surface leading-tight mb-3">{memory.title}</h4>
+                  <p className="text-on-surface-variant leading-relaxed">{memory.content}</p>
+                </div>
+              </article>
+            ))
+          ) : (
+            <>
+              {/* Default showcase cards when no memories exist */}
+              <article className="group">
+                <div className="relative mb-6">
+                  <div className="aspect-[4/5] rounded-lg overflow-hidden shadow-2xl relative bg-gradient-to-br from-pink-100 to-purple-100">
+                    <div className="w-full h-full flex items-center justify-center text-8xl">👶</div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                    <div className="absolute bottom-6 left-6 right-6">
+                      <span className="inline-block px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-bold uppercase tracking-tighter mb-2">İlk Adım</span>
+                      <p className="text-white/90 text-sm font-medium">12 Eylül 2023</p>
+                    </div>
+                  </div>
+                  {/* Break-out element */}
+                  <div className="absolute -top-6 -right-4 w-24 h-24 transform rotate-12 drop-shadow-2xl text-6xl flex items-center justify-center">
+                    🧸
+                  </div>
+                </div>
+                <div className="px-2">
+                  <h4 className="font-display font-bold text-2xl text-on-surface leading-tight mb-3">Bugün kocaman bir adım attık!</h4>
+                  <p className="text-on-surface-variant leading-relaxed">Oturma odasından mutfağa kadar tam 4 adım attı. Hepimiz şaşkınlık ve mutluluk içindeyiz. Dünyanın en güzel anıydı.</p>
+                </div>
+              </article>
+
+              <article className="group">
+                <div className="relative mb-6">
+                  <div className="aspect-square rounded-lg overflow-hidden shadow-2xl relative bg-gradient-to-br from-purple-100 to-pink-100">
+                    <div className="w-full h-full flex items-center justify-center text-8xl">😊</div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                    <div className="absolute bottom-6 left-6 right-6">
+                      <span className="inline-block px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-bold uppercase tracking-tighter mb-2">İlk Gülümseme</span>
+                      <p className="text-white/90 text-sm font-medium">5 Ağustos 2023</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="px-2">
+                  <h4 className="font-display font-bold text-2xl text-on-surface leading-tight mb-3">O eşsiz ilk tebessüm...</h4>
+                  <p className="text-on-surface-variant leading-relaxed">Sabah uykusundan uyandığında babasını görünce öyle bir güldü ki, kalbimiz eridi. Artık dünyayı tanımaya başlıyor.</p>
+                </div>
+              </article>
+
+              {/* 2-column grid for secondary cards */}
+              <div className="grid grid-cols-2 gap-6">
+                <article className="bg-surface-container-low p-5 rounded-lg border border-white/40 shadow-sm flex flex-col justify-between aspect-square">
+                  <div className="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center mb-4">
+                    <span className="material-symbols-outlined text-secondary">cake</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-secondary uppercase tracking-widest block mb-1">Doğum Günü</span>
+                    <h4 className="font-display font-bold text-lg text-on-surface leading-none mb-2">1 Yaş Partisi Planları</h4>
+                    <p className="text-xs text-on-surface-variant line-clamp-2">Tema seçildi: Bulutlar ve Yıldızlar...</p>
+                  </div>
+                </article>
+                <article className="bg-primary/5 p-5 rounded-lg border border-white/40 shadow-sm flex flex-col justify-between aspect-square">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                    <span className="material-symbols-outlined text-primary">restaurant</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-primary uppercase tracking-widest block mb-1">Beslenme</span>
+                    <h4 className="font-display font-bold text-lg text-on-surface leading-none mb-2">İlk Ek Gıda Deneyimi</h4>
+                    <p className="text-xs text-on-surface-variant line-clamp-2">Avokado püresini hiç sevmedi ama havuç...</p>
+                  </div>
+                </article>
+              </div>
+            </>
+          )}
+        </section>
 
         {/* New Entry Form */}
         <AnimatePresence>
@@ -123,9 +206,9 @@ export default function Memories() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="overflow-hidden mb-6"
+              className="overflow-hidden"
             >
-              <div className="glass-card p-4 space-y-4">
+              <div className="glass-card p-4 rounded-lg space-y-4">
                 {/* Type */}
                 <div className="flex gap-2">
                   {[
@@ -138,7 +221,7 @@ export default function Memories() {
                       key={t.type}
                       onClick={() => setNewEntry({ ...newEntry, type: t.type })}
                       className={`flex-1 py-2 rounded-lg text-xs font-medium flex flex-col items-center gap-1 ${
-                        newEntry.type === t.type ? 'bg-primary-50 border border-primary-300' : 'bg-warm-surface'
+                        newEntry.type === t.type ? 'bg-primary-container/30 border border-primary-container' : 'bg-surface-container-low'
                       }`}
                     >
                       <span>{t.emoji}</span>
@@ -153,7 +236,7 @@ export default function Memories() {
                   value={newEntry.title}
                   onChange={(e) => setNewEntry({ ...newEntry, title: e.target.value })}
                   placeholder={newEntry.type === 'letter' ? 'Sevgili Bebeğim...' : 'Başlık'}
-                  className="w-full h-11 px-3 rounded-xl bg-warm-surface border border-warm-border focus:border-primary-400 outline-none text-sm"
+                  className="w-full h-11 px-3 rounded-xl bg-surface-container border border-outline-variant/15 focus:border-primary outline-none text-sm"
                 />
 
                 {/* Content */}
@@ -166,7 +249,7 @@ export default function Memories() {
                     'Anınızı yazın...'
                   }
                   rows={4}
-                  className="w-full px-3 py-2 rounded-xl bg-warm-surface border border-warm-border focus:border-primary-400 outline-none text-sm resize-none"
+                  className="w-full px-3 py-2 rounded-xl bg-surface-container border border-outline-variant/15 focus:border-primary outline-none text-sm resize-none"
                 />
 
                 {/* Photo upload */}
@@ -177,33 +260,33 @@ export default function Memories() {
                       onClick={() => setNewEntry({ ...newEntry, imageUrl: undefined })}
                       className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/50 flex items-center justify-center"
                     >
-                      <Trash2 className="w-4 h-4 text-white" />
+                      <span className="material-symbols-outlined text-white text-sm">delete</span>
                     </button>
                   </div>
                 ) : (
                   <button
                     onClick={handlePhotoUpload}
-                    className="w-full h-11 rounded-xl border border-warm-border flex items-center justify-center gap-2 text-sm text-warm-muted hover:bg-warm-surface"
+                    className="w-full h-11 rounded-xl border border-outline-variant/15 flex items-center justify-center gap-2 text-sm text-on-surface-variant hover:bg-surface-container-low"
                   >
-                    <Camera className="w-4 h-4" />
+                    <span className="material-symbols-outlined text-sm">photo_camera</span>
                     Fotoğraf Ekle
                   </button>
                 )}
 
                 {/* Mood */}
                 <div>
-                  <label className="text-xs font-medium text-warm-text mb-2 block">Ruh Haliniz</label>
+                  <label className="text-xs font-medium text-on-surface mb-2 block">Ruh Haliniz</label>
                   <div className="flex gap-2">
                     {moods.map((m) => (
                       <button
                         key={m.value}
                         onClick={() => setNewEntry({ ...newEntry, mood: m.value })}
                         className={`flex-1 py-2 rounded-lg flex flex-col items-center gap-0.5 transition-all ${
-                          newEntry.mood === m.value ? 'bg-primary-50 border border-primary-300' : 'bg-warm-surface'
+                          newEntry.mood === m.value ? 'bg-primary-container/30 border border-primary-container' : 'bg-surface-container-low'
                         }`}
                       >
                         <span className="text-lg">{m.emoji}</span>
-                        <span className="text-[9px] text-warm-muted">{m.label}</span>
+                        <span className="text-[9px] text-on-surface-variant">{m.label}</span>
                       </button>
                     ))}
                   </div>
@@ -214,21 +297,21 @@ export default function Memories() {
                   type="date"
                   value={newEntry.date}
                   onChange={(e) => setNewEntry({ ...newEntry, date: e.target.value })}
-                  className="w-full h-11 px-3 rounded-xl bg-warm-surface border border-warm-border focus:border-primary-400 outline-none text-sm"
+                  className="w-full h-11 px-3 rounded-xl bg-surface-container border border-outline-variant/15 focus:border-primary outline-none text-sm"
                 />
 
                 {/* Actions */}
                 <div className="flex gap-2">
                   <button
                     onClick={() => setShowNew(false)}
-                    className="flex-1 h-11 rounded-xl border border-warm-border text-warm-text text-sm font-medium"
+                    className="flex-1 h-11 rounded-xl border border-outline-variant/15 text-on-surface-variant text-sm font-medium"
                   >
                     İptal
                   </button>
                   <button
                     onClick={handleSave}
                     disabled={!newEntry.title || !newEntry.content}
-                    className="flex-1 h-11 rounded-xl gradient-primary text-white text-sm font-semibold disabled:opacity-50"
+                    className="flex-1 h-11 rounded-xl bg-gradient-to-br from-secondary to-secondary-dim text-white text-sm font-semibold disabled:opacity-50"
                   >
                     Kaydet
                   </button>
@@ -238,56 +321,17 @@ export default function Memories() {
           )}
         </AnimatePresence>
 
-        {/* Memory List */}
-        {filteredMemories.length === 0 ? (
-          <div className="text-center py-12">
-            <span className="text-5xl block mb-4">📔</span>
-            <h3 className="font-display font-semibold text-warm-text mb-1">Henüz anı yok</h3>
-            <p className="text-sm text-warm-muted">İlk anınızı ekleyerek başlayın</p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {filteredMemories.map((memory, i) => (
-              <motion.div
-                key={memory.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className="glass-card overflow-hidden"
-              >
-                {memory.imageUrl && (
-                  <img src={memory.imageUrl} alt="" className="w-full h-40 object-cover" />
-                )}
-                <div className="p-4">
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg">
-                        {memory.type === 'photo' ? '📸' : memory.type === 'letter' ? '💌' : memory.type === 'milestone' ? '⭐' : '📝'}
-                      </span>
-                      <h3 className="font-semibold text-sm text-warm-text">{memory.title}</h3>
-                    </div>
-                    {memory.mood && (
-                      <span className="text-lg">{moods.find((m) => m.value === memory.mood)?.emoji}</span>
-                    )}
-                  </div>
-                  <p className="text-sm text-warm-muted leading-relaxed mb-2">{memory.content}</p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1 text-xs text-warm-muted/70">
-                      <Calendar className="w-3 h-3" />
-                      {formatDate(memory.date)}
-                    </div>
-                    <button
-                      onClick={() => removeMemory(memory.id)}
-                      className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-red-50 transition-colors"
-                    >
-                      <Trash2 className="w-3.5 h-3.5 text-warm-muted hover:text-red-500" />
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        )}
+        {/* Empty state spacing for FAB */}
+        <div className="h-12"></div>
+
+        {/* Large CTA Button */}
+        <button
+          onClick={() => setShowNew(true)}
+          className="w-full py-5 px-8 bg-gradient-to-br from-secondary to-secondary-dim text-white rounded-full font-display font-bold shadow-[0_12px_24px_rgba(104,52,235,0.3)] flex items-center justify-center gap-3 active:scale-95 transition-transform"
+        >
+          <span className="material-symbols-outlined">add_circle</span>
+          Yeni Anı Ekle
+        </button>
       </div>
     </MobileLayout>
   )
