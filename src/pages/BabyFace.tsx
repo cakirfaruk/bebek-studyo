@@ -97,7 +97,7 @@ export default function BabyFace() {
               <button
                 key={type}
                 onClick={() => handlePhotoUpload(type)}
-                className="aspect-square rounded-2xl border-2 border-dashed border-warm-border hover:border-primary-400 bg-white flex flex-col items-center justify-center gap-2 transition-all overflow-hidden relative"
+                className="aspect-square rounded-2xl border-2 border-dashed border-white/50 hover:border-primary-400 glass-card flex flex-col items-center justify-center gap-2 transition-all overflow-hidden relative"
               >
                 {photo ? (
                   <>
@@ -135,8 +135,8 @@ export default function BabyFace() {
               onClick={() => setSelectedGender(g.value)}
               className={`flex-1 h-12 rounded-xl flex items-center justify-center gap-2 font-medium text-sm transition-all ${
                 selectedGender === g.value
-                  ? 'bg-primary-500 text-white shadow-glow-primary'
-                  : 'bg-white border border-warm-border text-warm-text'
+                  ? 'gradient-primary text-white shadow-glow-primary'
+                  : 'glass-card text-warm-text'
               }`}
             >
               <span>{g.emoji}</span>
@@ -154,7 +154,7 @@ export default function BabyFace() {
               className={`flex-1 py-3 rounded-xl flex flex-col items-center gap-1 transition-all ${
                 selectedStyle === s.id
                   ? 'bg-secondary-500 text-white shadow-glow-secondary'
-                  : 'bg-white border border-warm-border text-warm-text'
+                  : 'glass-card text-warm-text'
               }`}
             >
               <span className="text-lg">{s.emoji}</span>
@@ -164,7 +164,7 @@ export default function BabyFace() {
         </div>
 
         {/* Age Slider */}
-        <div className="bg-white rounded-2xl p-4 border border-warm-border mb-6">
+        <div className="glass-card p-4 mb-6">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm font-medium text-warm-text flex items-center gap-1.5">
               <Palette className="w-4 h-4 text-secondary-500" />
@@ -225,7 +225,7 @@ export default function BabyFace() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="bg-white rounded-2xl overflow-hidden border border-warm-border shadow-card"
+              className="glass-card overflow-hidden shadow-card"
             >
               <div className="aspect-square bg-warm-surface">
                 <img src={currentImage} alt="Bebek tahmini" className="w-full h-full object-cover" />

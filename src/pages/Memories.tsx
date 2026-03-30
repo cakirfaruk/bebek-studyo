@@ -82,7 +82,7 @@ export default function Memories() {
             { emoji: '💌', count: memories.filter((m) => m.type === 'letter').length, label: 'Mektup' },
             { emoji: '⭐', count: memories.filter((m) => m.type === 'milestone').length, label: 'İlk' },
           ].map((stat) => (
-            <div key={stat.label} className="flex-1 bg-white rounded-xl p-3 border border-warm-border text-center">
+            <div key={stat.label} className="flex-1 glass-card p-3 text-center">
               <span className="text-lg">{stat.emoji}</span>
               <div className="font-bold text-lg text-warm-text">{stat.count}</div>
               <div className="text-[10px] text-warm-muted">{stat.label}</div>
@@ -98,8 +98,8 @@ export default function Memories() {
               onClick={() => setActiveTab(tab.id)}
               className={`shrink-0 px-4 py-2 rounded-full text-xs font-medium transition-all ${
                 activeTab === tab.id
-                  ? 'bg-primary-500 text-white'
-                  : 'bg-white border border-warm-border text-warm-text'
+                  ? 'gradient-primary text-white'
+                  : 'glass-card text-warm-text'
               }`}
             >
               {tab.label}
@@ -125,7 +125,7 @@ export default function Memories() {
               exit={{ opacity: 0, height: 0 }}
               className="overflow-hidden mb-6"
             >
-              <div className="bg-white rounded-2xl p-4 border border-warm-border space-y-4">
+              <div className="glass-card p-4 space-y-4">
                 {/* Type */}
                 <div className="flex gap-2">
                   {[
@@ -253,7 +253,7 @@ export default function Memories() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="bg-white rounded-2xl border border-warm-border overflow-hidden"
+                className="glass-card overflow-hidden"
               >
                 {memory.imageUrl && (
                   <img src={memory.imageUrl} alt="" className="w-full h-40 object-cover" />

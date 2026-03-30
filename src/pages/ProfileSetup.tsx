@@ -57,7 +57,7 @@ export default function ProfileSetup() {
   }
 
   return (
-    <div className="min-h-dvh bg-warm-bg px-6 pt-12 pb-8">
+    <div className="min-h-dvh page-bg px-6 pt-12 pb-8">
       <div style={{ maxWidth: 440, margin: '0 auto' }}>
         {/* Progress */}
         <div className="flex items-center gap-2 mb-8">
@@ -92,7 +92,7 @@ export default function ProfileSetup() {
                     value={form.motherName}
                     onChange={(e) => setForm({ ...form, motherName: e.target.value })}
                     placeholder="Anne adını girin"
-                    className="w-full h-12 px-4 rounded-xl bg-white border border-warm-border focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none text-warm-text"
+                    className="w-full h-12 px-4 input-field"
                   />
                 </div>
                 <div>
@@ -102,7 +102,7 @@ export default function ProfileSetup() {
                     value={form.fatherName}
                     onChange={(e) => setForm({ ...form, fatherName: e.target.value })}
                     placeholder="Baba adını girin"
-                    className="w-full h-12 px-4 rounded-xl bg-white border border-warm-border focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none text-warm-text"
+                    className="w-full h-12 px-4 input-field"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
@@ -114,7 +114,7 @@ export default function ProfileSetup() {
                         type="date"
                         value={form.motherBirthDate}
                         onChange={(e) => setForm({ ...form, motherBirthDate: e.target.value })}
-                        className="w-full h-12 pl-10 pr-3 rounded-xl bg-white border border-warm-border focus:border-primary-400 outline-none text-warm-text text-sm"
+                        className="w-full h-12 pl-10 pr-3 input-field text-sm"
                       />
                     </div>
                   </div>
@@ -126,7 +126,7 @@ export default function ProfileSetup() {
                         type="date"
                         value={form.fatherBirthDate}
                         onChange={(e) => setForm({ ...form, fatherBirthDate: e.target.value })}
-                        className="w-full h-12 pl-10 pr-3 rounded-xl bg-white border border-warm-border focus:border-primary-400 outline-none text-warm-text text-sm"
+                        className="w-full h-12 pl-10 pr-3 input-field text-sm"
                       />
                     </div>
                   </div>
@@ -151,7 +151,7 @@ export default function ProfileSetup() {
                     <button
                       key={type}
                       onClick={() => handlePhotoUpload(type)}
-                      className="aspect-[3/4] rounded-2xl border-2 border-dashed border-warm-border hover:border-primary-400 bg-white flex flex-col items-center justify-center gap-3 transition-all overflow-hidden"
+                      className="aspect-[3/4] rounded-2xl border-2 border-dashed border-white/50 hover:border-primary-400 glass-card flex flex-col items-center justify-center gap-3 transition-all overflow-hidden"
                     >
                       {photo ? (
                         <img src={photo} alt={type} className="w-full h-full object-cover" />
@@ -199,7 +199,7 @@ export default function ProfileSetup() {
                         type="date"
                         value={form.dueDate}
                         onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
-                        className="w-full h-12 pl-10 pr-3 rounded-xl bg-white border border-warm-border focus:border-primary-400 outline-none text-warm-text"
+                        className="w-full h-12 pl-10 pr-3 input-field"
                       />
                     </div>
                   </div>
@@ -218,8 +218,8 @@ export default function ProfileSetup() {
                         onClick={() => setForm({ ...form, babyGender: g.value as 'boy' | 'girl' | 'unknown' })}
                         className={`h-20 rounded-xl border-2 flex flex-col items-center justify-center gap-1 transition-all ${
                           form.babyGender === g.value
-                            ? 'border-primary-500 bg-primary-50'
-                            : 'border-warm-border bg-white'
+                            ? 'border-primary-500 bg-primary-50/80'
+                            : 'border-white/50 glass-card'
                         }`}
                       >
                         <span className="text-2xl">{g.emoji}</span>

@@ -1,91 +1,154 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Baby, Heart, Sparkles, ArrowRight, Star } from 'lucide-react'
+import { ArrowRight, Star } from 'lucide-react'
 
 const slides = [
   {
-    icon: Baby,
+    emoji: '🤰',
+    badge: 'Hamilelik Takibi',
+    title: 'Her Anı Sevgiyle\nTakip Edin',
+    subtitle: 'Haftalık gelişim, AI bebek yüzü tahmini ve kişiselleştirilmiş önerilerle yolculuğunuza eşlik ediyoruz.',
+  },
+  {
     emoji: '👶',
-    title: 'Bebeğinizin Dünyasına\nHoş Geldiniz',
-    subtitle: 'AI destekli bebek yüzü tahmini, akıllı isim önerileri ve hamilelik rehberi',
-    gradient: 'from-primary-400 to-rose-400',
+    badge: 'AI Bebek Yüzü',
+    title: 'Bebeğiniz Nasıl\nGörünecek?',
+    subtitle: 'Yapay zeka fotoğraflarınızı analiz ederek bebeğinizin yüzünü tahmin ediyor.',
   },
   {
-    icon: Sparkles,
     emoji: '✨',
-    title: 'Yapay Zeka ile\nBebeğinizi Görün',
-    subtitle: 'Anne ve babanın fotoğraflarından bebeğinizin nasıl görüneceğini keşfedin',
-    gradient: 'from-secondary-400 to-lavender-400',
-  },
-  {
-    icon: Heart,
-    emoji: '💝',
+    badge: 'Akıllı İsim Bulucu',
     title: 'Mükemmel İsmi\nBirlikte Bulalım',
-    subtitle: 'Numeroloji, astroloji, anlam ve uluslararası uyum ile en güzel ismi seçin',
-    gradient: 'from-accent-400 to-primary-400',
+    subtitle: 'Numeroloji, astroloji, anlam ve uluslararası uyum ile bebeğinize en güzel ismi seçin.',
   },
 ]
 
 export default function Welcome() {
   const [step, setStep] = useState(0)
   const navigate = useNavigate()
+  const slide = slides[step]
 
   return (
-    <div className="min-h-dvh flex flex-col bg-warm-bg relative overflow-hidden">
-      {/* Background decoration */}
+    <div
+      className="min-h-dvh flex flex-col relative overflow-hidden"
+      style={{ background: 'var(--color-surface)' }}
+    >
+      {/* Decorative gradient blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-primary-100/40 blur-3xl" />
-        <div className="absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-secondary-100/40 blur-3xl" />
-        <div className="absolute top-1/3 left-1/2 w-48 h-48 rounded-full bg-accent-100/30 blur-3xl" />
+        <motion.div
+          key={`b1-${step}`}
+          animate={{ x: [0, 30, 0], y: [0, -20, 0] }}
+          transition={{ duration: 8, repeat: Infinity }}
+          className="absolute -top-20 -right-16 w-[320px] h-[320px] rounded-full"
+          style={{
+            background: 'radial-gradient(circle, rgba(236,72,153,0.18) 0%, transparent 70%)',
+            filter: 'blur(80px)',
+          }}
+        />
+        <motion.div
+          key={`b2-${step}`}
+          animate={{ x: [0, -20, 0], y: [0, 30, 0] }}
+          transition={{ duration: 10, repeat: Infinity }}
+          className="absolute -bottom-24 -left-16 w-[280px] h-[280px] rounded-full"
+          style={{
+            background: 'radial-gradient(circle, rgba(147,51,234,0.14) 0%, transparent 70%)',
+            filter: 'blur(80px)',
+          }}
+        />
       </div>
 
+      {/* Content */}
       <div className="flex-1 flex flex-col items-center justify-center px-8 relative z-10">
         <AnimatePresence mode="wait">
           <motion.div
             key={step}
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -40 }}
-            transition={{ duration: 0.3 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col items-center text-center w-full"
           >
-            {/* Icon */}
+            {/* Glass emoji container */}
             <motion.div
-              className={`w-28 h-28 rounded-3xl bg-gradient-to-br ${slides[step].gradient} flex items-center justify-center mb-8 shadow-elevated`}
+              className="w-[110px] h-[110px] flex items-center justify-center mb-7"
+              style={{
+                background: 'rgba(255,255,255,0.5)',
+                backdropFilter: 'blur(24px)',
+                WebkitBackdropFilter: 'blur(24px)',
+                borderRadius: '2rem',
+                border: '1px solid rgba(255,255,255,0.4)',
+                boxShadow: '0 12px 40px rgba(0,0,0,0.06)',
+              }}
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
             >
-              <span className="text-5xl">{slides[step].emoji}</span>
+              <span className="text-[56px] leading-none">{slide.emoji}</span>
             </motion.div>
 
-            {/* Title */}
-            <h1 className="font-display font-bold text-[26px] text-warm-text leading-[1.2] whitespace-pre-line mb-3">
-              {slides[step].title}
+            {/* Glass pill badge */}
+            <span
+              className="mb-4 font-semibold text-[12px] px-4 py-1.5 inline-flex items-center gap-1"
+              style={{
+                background: 'rgba(255,255,255,0.5)',
+                backdropFilter: 'blur(8px)',
+                WebkitBackdropFilter: 'blur(8px)',
+                borderRadius: '9999px',
+                color: 'var(--color-primary)',
+              }}
+            >
+              {slide.badge}
+            </span>
+
+            {/* Display title */}
+            <h1
+              className="whitespace-pre-line mb-4"
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontWeight: 800,
+                fontSize: '28px',
+                lineHeight: 1.15,
+                color: 'var(--color-on-surface)',
+              }}
+            >
+              {slide.title}
             </h1>
 
-            {/* Subtitle */}
-            <p className="text-warm-muted text-[14px] leading-relaxed">
-              {slides[step].subtitle}
+            {/* Body subtitle */}
+            <p
+              className="max-w-[300px]"
+              style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '14px',
+                lineHeight: 1.65,
+                color: 'var(--color-on-surface-variant)',
+              }}
+            >
+              {slide.subtitle}
             </p>
           </motion.div>
         </AnimatePresence>
 
-        {/* Dots */}
-        <div className="flex gap-2 mt-12">
+        {/* Pagination dots */}
+        <div className="flex gap-2.5 mt-10">
           {slides.map((_, i) => (
             <button
               key={i}
               onClick={() => setStep(i)}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                i === step ? 'w-8 bg-primary-500' : 'w-2 bg-primary-200'
-              }`}
+              className="relative h-[6px] rounded-full transition-all duration-500"
+              style={{
+                width: i === step ? 32 : 8,
+                background:
+                  i === step
+                    ? 'linear-gradient(90deg, #ec4899, #9333ea)'
+                    : 'var(--color-surface-high)',
+              }}
             />
           ))}
         </div>
       </div>
 
-      {/* Bottom actions */}
+      {/* Bottom CTA */}
       <div className="px-8 pb-10 relative z-10 space-y-3">
         {step < slides.length - 1 ? (
           <>

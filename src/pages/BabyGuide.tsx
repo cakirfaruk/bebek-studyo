@@ -53,7 +53,7 @@ export default function BabyGuide() {
           />
 
           {/* Sleep */}
-          <div className="bg-white rounded-2xl p-4 border border-warm-border">
+          <div className="glass-card p-4">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-8 h-8 rounded-lg bg-sky-50 flex items-center justify-center">
                 <Moon className="w-4 h-4 text-sky-500" />
@@ -112,7 +112,7 @@ export default function BabyGuide() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
               onClick={() => setSelectedMonth(m.month)}
-              className="w-full bg-white rounded-2xl p-4 border border-warm-border hover:shadow-card transition-all text-left flex items-center gap-4"
+              className="w-full glass-card p-4 hover:shadow-card transition-all text-left flex items-center gap-4"
             >
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-secondary-400 to-lavender-400 flex items-center justify-center shrink-0">
                 <span className="text-white font-display font-bold text-lg">
@@ -147,7 +147,7 @@ function Section({ icon: Icon, title, color, bg, items }: {
   items: string[]
 }) {
   return (
-    <div className="bg-white rounded-2xl p-4 border border-warm-border">
+    <div className="glass-card p-4">
       <div className="flex items-center gap-2 mb-3">
         <div className={`w-8 h-8 rounded-lg ${bg} flex items-center justify-center`}>
           <Icon className={`w-4 h-4 ${color}`} />

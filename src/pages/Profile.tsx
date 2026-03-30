@@ -5,20 +5,20 @@ import { MobileLayout } from '@/components/layout/MobileLayout'
 import { useStore } from '@/stores/useStore'
 
 const menuItems = [
-  { icon: Edit3, label: 'Profili Düzenle', path: '/profile-setup', color: 'text-primary-500', bg: 'bg-primary-50' },
-  { icon: Heart, label: 'Favori İsimler', path: '/names', color: 'text-rose-500', bg: 'bg-rose-50', badge: true },
-  { icon: Crown, label: 'Premium Üyelik', path: '/premium', color: 'text-accent-500', bg: 'bg-accent-50' },
-  { icon: Bell, label: 'Bildirimler', path: '/notifications', color: 'text-sky-500', bg: 'bg-sky-50' },
-  { icon: Shield, label: 'Gizlilik', path: '/privacy', color: 'text-mint-500', bg: 'bg-mint-50' },
-  { icon: HelpCircle, label: 'Yardım & SSS', path: '/help', color: 'text-secondary-500', bg: 'bg-secondary-50' },
-  { icon: MessageCircle, label: 'Bize Ulaşın', path: '/contact', color: 'text-lavender-500', bg: 'bg-lavender-50' },
+  { icon: Edit3, label: 'Profili Duzenle', path: '/profile-setup', iconBg: 'bg-primary-container/30', iconColor: 'text-primary' },
+  { icon: Heart, label: 'Favori Isimler', path: '/names', iconBg: 'bg-primary/10', iconColor: 'text-primary', badge: true },
+  { icon: Crown, label: 'Premium Uyelik', path: '/premium', iconBg: 'bg-secondary-container', iconColor: 'text-secondary' },
+  { icon: Bell, label: 'Bildirimler', path: '/notifications', iconBg: 'bg-tertiary-container/30', iconColor: 'text-tertiary' },
+  { icon: Shield, label: 'Gizlilik', path: '/privacy', iconBg: 'bg-tertiary/10', iconColor: 'text-tertiary-dim' },
+  { icon: HelpCircle, label: 'Yardim & SSS', path: '/help', iconBg: 'bg-secondary/10', iconColor: 'text-secondary' },
+  { icon: MessageCircle, label: 'Bize Ulasin', path: '/contact', iconBg: 'bg-primary-container/20', iconColor: 'text-primary-dim' },
 ]
 
 const segmentLabels = {
-  expecting: '🤰 Bebek Bekliyoruz',
-  dreaming: '💑 Hayalini Kuruyoruz',
-  newparent: '👶 Yeni Ebeveyn',
-  planner: '📋 Planlıyoruz',
+  expecting: 'Bebek Bekliyoruz',
+  dreaming: 'Hayalini Kuruyoruz',
+  newparent: 'Yeni Ebeveyn',
+  planner: 'Planliyoruz',
 }
 
 export default function Profile() {
@@ -32,15 +32,15 @@ export default function Profile() {
 
   return (
     <MobileLayout>
-      <div className="py-4">
-        {/* Profile Card */}
+      <div className="space-y-8 pb-6">
+        {/* Profile Card - Glass card */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl p-5 border border-warm-border mb-6"
+          className="glass-card rounded-2xl p-6 shadow-card"
         >
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full gradient-warm flex items-center justify-center">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg shadow-primary/20 overflow-hidden">
               {profile?.motherPhoto ? (
                 <img src={profile.motherPhoto} alt="" className="w-full h-full rounded-full object-cover" />
               ) : (
@@ -48,12 +48,12 @@ export default function Profile() {
               )}
             </div>
             <div className="flex-1">
-              <h2 className="font-display font-bold text-lg text-warm-text">
-                {profile?.motherName || 'Kullanıcı'}
+              <h2 className="font-display font-bold text-lg text-on-surface">
+                {profile?.motherName || 'Kullanici'}
               </h2>
-              <p className="text-sm text-warm-muted">{profile?.email}</p>
+              <p className="text-sm text-on-surface-variant font-body">{profile?.email}</p>
               {segment && (
-                <span className="inline-block mt-1 text-xs bg-primary-50 text-primary-600 px-2.5 py-0.5 rounded-full">
+                <span className="inline-block mt-1 text-xs bg-secondary-container text-on-secondary-container px-2.5 py-0.5 rounded-full font-bold">
                   {segmentLabels[segment]}
                 </span>
               )}
@@ -61,65 +61,69 @@ export default function Profile() {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-warm-border">
-            <div className="text-center">
-              <div className="font-bold text-lg text-warm-text">{profile?.credits || 0}</div>
-              <div className="text-[10px] text-warm-muted">Kredi</div>
+          <div className="grid grid-cols-3 gap-3 mt-5 pt-5">
+            <div className="text-center bg-surface-container-low rounded-xl py-3">
+              <div className="font-bold text-lg text-on-surface font-display">{profile?.credits || 0}</div>
+              <div className="text-[10px] text-on-surface-variant font-body uppercase tracking-wider font-semibold">Kredi</div>
             </div>
-            <div className="text-center">
-              <div className="font-bold text-lg text-warm-text">{favoriteNames.length}</div>
-              <div className="text-[10px] text-warm-muted">Favori İsim</div>
+            <div className="text-center bg-surface-container-low rounded-xl py-3">
+              <div className="font-bold text-lg text-on-surface font-display">{favoriteNames.length}</div>
+              <div className="text-[10px] text-on-surface-variant font-body uppercase tracking-wider font-semibold">Favori</div>
             </div>
-            <div className="text-center">
-              <div className="font-bold text-lg text-warm-text">
+            <div className="text-center bg-surface-container-low rounded-xl py-3">
+              <div className="font-bold text-lg text-on-surface font-display">
                 {profile?.isPremium ? '👑' : '🆓'}
               </div>
-              <div className="text-[10px] text-warm-muted">
-                {profile?.isPremium ? 'Premium' : 'Ücretsiz'}
+              <div className="text-[10px] text-on-surface-variant font-body uppercase tracking-wider font-semibold">
+                {profile?.isPremium ? 'Premium' : 'Ucretsiz'}
               </div>
             </div>
           </div>
         </motion.div>
 
-        {/* Credit Purchase */}
+        {/* Premium / Credit Purchase Banner - gradient-brand */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-gradient-to-r from-accent-400 to-accent-500 rounded-2xl p-4 mb-6 text-white"
+          className="relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br from-primary to-secondary text-white shadow-[0_20px_40px_rgba(186,9,97,0.2)]"
         >
-          <div className="flex items-center justify-between">
+          {/* Decorative glow */}
+          <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl" />
+          <div className="relative z-10 flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <Star className="w-5 h-5" />
-                <h3 className="font-semibold text-sm">Kredi Satın Al</h3>
+                <h3 className="font-display font-bold">Kredi Satin Al</h3>
               </div>
-              <p className="text-white/80 text-xs">AI özelliklerini kullanmak için kredi gerekli</p>
+              <p className="text-white/80 text-xs font-body">AI ozelliklerini kullanmak icin kredi gerekli</p>
             </div>
-            <button className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-xl text-sm font-semibold transition-colors">
-              Satın Al
+            <button className="bg-white/20 backdrop-blur-md hover:bg-white/30 px-5 py-2.5 rounded-full text-sm font-bold transition-colors shadow-lg">
+              Satin Al
             </button>
           </div>
         </motion.div>
 
-        {/* Menu Items */}
-        <div className="bg-white rounded-2xl border border-warm-border overflow-hidden mb-6">
-          {menuItems.map((item) => (
+        {/* Menu Items - Glass card */}
+        <div className="glass-card rounded-2xl overflow-hidden">
+          {menuItems.map((item, index) => (
             <button
               key={item.label}
               onClick={() => navigate(item.path)}
-              className="w-full flex items-center gap-3 px-4 py-3.5 text-left hover:bg-warm-surface transition-colors border-b border-warm-border last:border-b-0"
+              className={`w-full flex items-center gap-3 px-5 py-4 text-left hover:bg-white/30 transition-colors ${
+                index < menuItems.length - 1 ? '' : ''
+              }`}
             >
-              <div className={`w-9 h-9 rounded-xl ${item.bg} flex items-center justify-center`}>
-                <item.icon className={`w-4.5 h-4.5 ${item.color}`} />
+              <div className={`w-10 h-10 rounded-full ${item.iconBg} flex items-center justify-center`}>
+                <item.icon className={`w-5 h-5 ${item.iconColor}`} />
               </div>
-              <span className="flex-1 text-sm font-medium text-warm-text">{item.label}</span>
+              <span className="flex-1 text-sm font-medium text-on-surface font-body">{item.label}</span>
               {item.badge && favoriteNames.length > 0 && (
-                <span className="bg-primary-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                <span className="bg-primary text-on-primary text-[10px] font-bold px-2 py-0.5 rounded-full">
                   {favoriteNames.length}
                 </span>
               )}
-              <ChevronRight className="w-4 h-4 text-warm-muted" />
+              <ChevronRight className="w-4 h-4 text-on-surface-variant" />
             </button>
           ))}
         </div>
@@ -127,14 +131,14 @@ export default function Profile() {
         {/* Logout */}
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-2 h-12 rounded-xl border border-red-200 text-red-500 font-medium text-sm hover:bg-red-50 transition-colors"
+          className="w-full flex items-center justify-center gap-2 py-4 rounded-full bg-error-container/10 text-error font-bold text-sm hover:bg-error-container/20 transition-colors"
         >
-          <LogOut className="w-4.5 h-4.5" />
-          Çıkış Yap
+          <LogOut className="w-5 h-5" />
+          Cikis Yap
         </button>
 
-        <p className="text-center text-[10px] text-warm-muted/50 mt-6">
-          BebekStüdyo v1.0.0
+        <p className="text-center text-[10px] text-on-surface-variant/50 font-body">
+          BebekStudyo v1.0.0
         </p>
       </div>
     </MobileLayout>

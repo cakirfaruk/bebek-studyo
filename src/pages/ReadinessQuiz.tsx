@@ -172,7 +172,7 @@ export default function ReadinessQuiz() {
                 <button
                   key={i}
                   onClick={() => handleAnswer(opt.score)}
-                  className="w-full bg-white rounded-xl p-4 border border-warm-border hover:border-primary-300 hover:shadow-card transition-all text-left active:scale-[0.98] flex items-center gap-3"
+                  className="w-full glass-card p-4 hover:border-primary-300 hover:shadow-card transition-all text-left active:scale-[0.98] flex items-center gap-3"
                 >
                   <div className="w-8 h-8 rounded-full bg-warm-surface flex items-center justify-center shrink-0 text-sm font-medium text-warm-muted">
                     {String.fromCharCode(65 + i)}
