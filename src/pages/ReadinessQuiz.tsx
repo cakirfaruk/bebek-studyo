@@ -110,10 +110,10 @@ export default function ReadinessQuiz() {
   const percentage = Math.round((totalScore / maxScore) * 100)
 
   const getResult = () => {
-    if (percentage >= 80) return { emoji: '🌟', title: 'Harika Hazırsınız!', color: 'text-mint-600', desc: 'Hem duygusal hem pratik olarak çok iyi hazırlanmışsınız. Bu güzel yolculuğa başlamak için harika bir noktadasınız.' }
-    if (percentage >= 60) return { emoji: '💪', title: 'İyi Gidiyorsunuz!', color: 'text-accent-600', desc: 'Birçok alanda hazırsınız. Bazı konularda biraz daha hazırlık yapmanız faydalı olabilir.' }
-    if (percentage >= 40) return { emoji: '🌱', title: 'Gelişim Alanları Var', color: 'text-secondary-600', desc: 'Bazı önemli alanlarda daha fazla hazırlık yapmanız önerilir. Aceleniz yok, adım adım ilerleyin.' }
-    return { emoji: '📚', title: 'Daha Fazla Hazırlık Gerekiyor', color: 'text-primary-600', desc: 'Ebeveynlik büyük bir adım. Birlikte planlama yaparak bu yolculuğa daha hazırlıklı başlayabilirsiniz.' }
+    if (percentage >= 80) return { emoji: '🌟', title: 'Harika Hazırsınız!', color: 'text-tertiary', desc: 'Hem duygusal hem pratik olarak çok iyi hazırlanmışsınız. Bu güzel yolculuğa başlamak için harika bir noktadasınız.' }
+    if (percentage >= 60) return { emoji: '💪', title: 'İyi Gidiyorsunuz!', color: 'text-secondary', desc: 'Birçok alanda hazırsınız. Bazı konularda biraz daha hazırlık yapmanız faydalı olabilir.' }
+    if (percentage >= 40) return { emoji: '🌱', title: 'Gelişim Alanları Var', color: 'text-secondary-dim', desc: 'Bazı önemli alanlarda daha fazla hazırlık yapmanız önerilir. Aceleniz yok, adım adım ilerleyin.' }
+    return { emoji: '📚', title: 'Daha Fazla Hazırlık Gerekiyor', color: 'text-primary', desc: 'Ebeveynlik büyük bir adım. Birlikte planlama yaparak bu yolculuğa daha hazırlıklı başlayabilirsiniz.' }
   }
 
   const reset = () => {
@@ -131,13 +131,13 @@ export default function ReadinessQuiz() {
             <span className="text-6xl block mb-4">{result.emoji}</span>
             <h2 className={`font-display font-bold text-2xl ${result.color} mb-2`}>{result.title}</h2>
             <div className="mb-6">
-              <div className="font-display font-bold text-4xl text-warm-text mb-1">%{percentage}</div>
-              <div className="h-3 bg-warm-surface rounded-full overflow-hidden max-w-xs mx-auto">
-                <motion.div className="h-full gradient-primary rounded-full" initial={{ width: 0 }} animate={{ width: `${percentage}%` }} transition={{ duration: 1 }} />
+              <div className="font-display font-bold text-4xl text-on-surface mb-1">%{percentage}</div>
+              <div className="h-3 bg-surface-container-low rounded-full overflow-hidden max-w-xs mx-auto">
+                <motion.div className="h-full bg-gradient-to-r from-primary to-secondary rounded-full" initial={{ width: 0 }} animate={{ width: `${percentage}%` }} transition={{ duration: 1 }} />
               </div>
             </div>
-            <p className="text-warm-muted text-sm leading-relaxed mb-8 max-w-xs mx-auto">{result.desc}</p>
-            <button onClick={reset} className="h-12 px-8 rounded-xl border border-warm-border text-warm-text font-medium text-sm flex items-center justify-center gap-2 mx-auto">
+            <p className="text-on-surface-variant text-sm leading-relaxed mb-8 max-w-xs mx-auto">{result.desc}</p>
+            <button onClick={reset} className="h-12 px-8 rounded-xl border border-outline-variant/20 text-on-surface font-medium text-sm flex items-center justify-center gap-2 mx-auto">
               <RotateCcw className="w-4 h-4" />
               Tekrar Başla
             </button>
@@ -154,9 +154,9 @@ export default function ReadinessQuiz() {
       <div className="py-6">
         {/* Progress */}
         <div className="flex items-center gap-2 mb-8">
-          <span className="text-xs text-warm-muted">{currentQ + 1}/{questions.length}</span>
-          <div className="flex-1 h-2 bg-warm-surface rounded-full overflow-hidden">
-            <motion.div className="h-full gradient-primary rounded-full" animate={{ width: `${((currentQ + 1) / questions.length) * 100}%` }} />
+          <span className="text-xs text-on-surface-variant">{currentQ + 1}/{questions.length}</span>
+          <div className="flex-1 h-2 bg-surface-container-low rounded-full overflow-hidden">
+            <motion.div className="h-full bg-gradient-to-r from-primary to-secondary rounded-full" animate={{ width: `${((currentQ + 1) / questions.length) * 100}%` }} />
           </div>
         </div>
 
@@ -164,8 +164,8 @@ export default function ReadinessQuiz() {
           <motion.div key={currentQ} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
             <div className="text-center mb-8">
               <span className="text-5xl block mb-4">{q.emoji}</span>
-              <span className="text-xs text-warm-muted bg-warm-surface px-3 py-1 rounded-full">{q.category}</span>
-              <h2 className="font-display font-semibold text-lg text-warm-text mt-4">{q.question}</h2>
+              <span className="text-xs text-on-surface-variant bg-surface-container-low px-3 py-1 rounded-full">{q.category}</span>
+              <h2 className="font-display font-semibold text-lg text-on-surface mt-4">{q.question}</h2>
             </div>
             <div className="space-y-3">
               {q.options.map((opt, i) => (
@@ -174,11 +174,11 @@ export default function ReadinessQuiz() {
                   onClick={() => handleAnswer(opt.score)}
                   className="w-full glass-card p-4 hover:border-primary-300 hover:shadow-card transition-all text-left active:scale-[0.98] flex items-center gap-3"
                 >
-                  <div className="w-8 h-8 rounded-full bg-warm-surface flex items-center justify-center shrink-0 text-sm font-medium text-warm-muted">
+                  <div className="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center shrink-0 text-sm font-medium text-on-surface-variant">
                     {String.fromCharCode(65 + i)}
                   </div>
-                  <span className="text-sm font-medium text-warm-text">{opt.label}</span>
-                  <ArrowRight className="w-4 h-4 text-warm-muted ml-auto" />
+                  <span className="text-sm font-medium text-on-surface">{opt.label}</span>
+                  <ArrowRight className="w-4 h-4 text-on-surface-variant ml-auto" />
                 </button>
               ))}
             </div>

@@ -1,10 +1,18 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight } from 'lucide-react'
 import { useStore } from '@/stores/useStore'
-import { supabase } from '@/lib/supabase'
+import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 import { toast } from 'sonner'
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+function validatePassword(password: string): string | null {
+  if (password.length < 6) return 'Şifre en az 6 karakter olmalıdır'
+  if (!/\d/.test(password)) return 'Şifre en az 1 rakam içermelidir'
+  return null
+}
 
 export default function Auth() {
   const [searchParams] = useSearchParams()
@@ -15,9 +23,38 @@ export default function Auth() {
   const navigate = useNavigate()
   const { setAuthenticated, setProfile } = useStore()
 
+  const emailError = useMemo(() => {
+    if (!form.email) return null
+    return EMAIL_REGEX.test(form.email) ? null : 'Geçerli bir e-posta adresi girin'
+  }, [form.email])
+
+  const passwordError = useMemo(() => {
+    if (!form.password) return null
+    return validatePassword(form.password)
+  }, [form.password])
+
+  const isFormValid = useMemo(() => {
+    if (!form.email || !form.password) return false
+    if (emailError || passwordError) return false
+    if (!isLogin && !form.name.trim()) return false
+    return true
+  }, [form, emailError, passwordError, isLogin])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!isFormValid) return
     setLoading(true)
+
+    if (!isSupabaseConfigured()) {
+      // Demo mode - Supabase not configured
+      setAuthenticated(true)
+      setProfile({ id: crypto.randomUUID(), email: form.email || 'demo@bebekstudyo.com', segment: 'expecting', motherName: form.name || '', fatherName: '', credits: 100, isPremium: false, createdAt: new Date().toISOString() })
+      navigate(isLogin ? '/' : '/segment-select')
+      toast.success(isLogin ? 'Demo modunda giriş yapıldı!' : 'Demo hesabı oluşturuldu!')
+      setLoading(false)
+      return
+    }
+
     try {
       if (isLogin) {
         const { data, error } = await supabase.auth.signInWithPassword({ email: form.email, password: form.password })
@@ -32,11 +69,9 @@ export default function Auth() {
         setProfile({ id: data.user?.id || crypto.randomUUID(), email: form.email, segment: 'expecting', motherName: '', fatherName: '', credits: 100, isPremium: false, createdAt: new Date().toISOString() })
         navigate('/segment-select')
       }
-    } catch {
-      setAuthenticated(true)
-      setProfile({ id: crypto.randomUUID(), email: form.email || 'demo@bebekstudyo.com', segment: 'expecting', motherName: form.name || '', fatherName: '', credits: 100, isPremium: false, createdAt: new Date().toISOString() })
-      navigate(isLogin ? '/' : '/segment-select')
-      toast.success(isLogin ? 'Hoş geldiniz!' : 'Hesap oluşturuldu!')
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Bir hata oluştu. Lütfen tekrar deneyin.'
+      toast.error(message)
     } finally {
       setLoading(false)
     }
@@ -89,11 +124,13 @@ export default function Auth() {
         <motion.form initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} onSubmit={handleSubmit} className="flex flex-col gap-3.5">
           {!isLogin && (
             <div className="relative">
+              <label htmlFor="auth-name" className="sr-only">Adınız</label>
               <User
                 className="absolute left-[14px] top-1/2 -translate-y-1/2 w-[18px] h-[18px] pointer-events-none"
                 style={{ color: 'var(--color-outline)' }}
               />
               <input
+                id="auth-name"
                 type="text"
                 placeholder="Adınız"
                 value={form.name}
@@ -103,11 +140,13 @@ export default function Auth() {
             </div>
           )}
           <div className="relative">
+            <label htmlFor="auth-email" className="sr-only">E-posta adresiniz</label>
             <Mail
               className="absolute left-[14px] top-1/2 -translate-y-1/2 w-[18px] h-[18px] pointer-events-none"
               style={{ color: 'var(--color-outline)' }}
             />
             <input
+              id="auth-email"
               type="email"
               placeholder="E-posta adresiniz"
               value={form.email}
@@ -117,11 +156,13 @@ export default function Auth() {
             />
           </div>
           <div className="relative">
+            <label htmlFor="auth-password" className="sr-only">Şifreniz</label>
             <Lock
               className="absolute left-[14px] top-1/2 -translate-y-1/2 w-[18px] h-[18px] pointer-events-none"
               style={{ color: 'var(--color-outline)' }}
             />
             <input
+              id="auth-password"
               type={showPassword ? 'text' : 'password'}
               placeholder="Şifreniz (min. 6 karakter)"
               value={form.password}
@@ -146,6 +187,7 @@ export default function Auth() {
           {isLogin && (
             <button
               type="button"
+              onClick={() => toast.info('Bu özellik yakında aktif olacak')}
               className="self-start text-[13px] font-medium ml-1 -mt-1"
               style={{ color: 'var(--color-secondary)', background: 'none', border: 'none', cursor: 'pointer' }}
             >
@@ -153,7 +195,14 @@ export default function Auth() {
             </button>
           )}
 
-          <button type="submit" disabled={loading} className="btn-primary mt-2">
+          {emailError && form.email && (
+            <p className="text-[12px] ml-1 -mt-1" style={{ color: 'var(--color-error, #d32f2f)' }}>{emailError}</p>
+          )}
+          {passwordError && form.password && (
+            <p className="text-[12px] ml-1 -mt-1" style={{ color: 'var(--color-error, #d32f2f)' }}>{passwordError}</p>
+          )}
+
+          <button type="submit" disabled={loading || !isFormValid} className="btn-primary mt-2">
             {loading ? <div className="spinner" /> : <>{isLogin ? 'Giriş Yap' : 'Kayıt Ol'}<ArrowRight className="w-5 h-5" /></>}
           </button>
         </motion.form>
@@ -171,7 +220,7 @@ export default function Auth() {
         </div>
 
         {/* Google button */}
-        <button className="btn-glass w-full">
+        <button onClick={() => toast.info('Google ile giriş yakında aktif olacak')} className="btn-glass w-full">
           <svg width="18" height="18" viewBox="0 0 24 24">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
             <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />

@@ -1,3 +1,4 @@
+import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { useStore } from '@/stores/useStore'
@@ -34,6 +35,29 @@ function LoadingScreen() {
   )
 }
 
+class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error: string}> {
+  constructor(props: {children: React.ReactNode}) {
+    super(props)
+    this.state = { hasError: false, error: '' }
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error: error.message }
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{padding:40,textAlign:'center',fontFamily:'Be Vietnam Pro'}}>
+          <p style={{fontSize:48,marginBottom:16}}>{'😔'}</p>
+          <h2 style={{fontSize:20,fontWeight:700,marginBottom:8}}>Bir hata olustu</h2>
+          <p style={{color:'#5a5f67',marginBottom:24}}>{this.state.error}</p>
+          <button onClick={()=>window.location.reload()} style={{padding:'12px 32px',borderRadius:9999,background:'linear-gradient(to right,#6834eb,#5c20df)',color:'#fff',border:'none',fontWeight:700,cursor:'pointer'}}>Yeniden Dene</button>
+        </div>
+      )
+    }
+    return this.props.children
+  }
+}
+
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useStore((s) => s.isAuthenticated)
   if (!isAuthenticated) return <Navigate to="/welcome" replace />
@@ -58,6 +82,7 @@ export default function App() {
           },
         }}
       />
+      <ErrorBoundary>
       <Suspense fallback={<LoadingScreen />}>
         <Routes>
           {/* Public routes */}
@@ -127,6 +152,7 @@ export default function App() {
           <Route path="*" element={<Navigate to={isAuthenticated ? '/' : '/welcome'} replace />} />
         </Routes>
       </Suspense>
+      </ErrorBoundary>
     </BrowserRouter>
   )
 }

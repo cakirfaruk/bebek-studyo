@@ -5,6 +5,7 @@ export interface UserProfile {
   email: string
   segment: UserSegment
   motherName: string
+  surname?: string
   fatherName: string
   motherBirthDate?: string
   fatherBirthDate?: string

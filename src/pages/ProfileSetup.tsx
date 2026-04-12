@@ -4,6 +4,24 @@ import { motion } from 'framer-motion'
 import { Camera, Calendar, ArrowRight, Check } from 'lucide-react'
 import { useStore } from '@/stores/useStore'
 
+function compressImage(dataUrl: string, maxSize = 800, quality = 0.7): Promise<string> {
+  return new Promise((resolve) => {
+    const img = new Image()
+    img.onload = () => {
+      const canvas = document.createElement('canvas')
+      let w = img.width, h = img.height
+      if (w > maxSize || h > maxSize) {
+        if (w > h) { h = (h / w) * maxSize; w = maxSize }
+        else { w = (w / h) * maxSize; h = maxSize }
+      }
+      canvas.width = w; canvas.height = h
+      canvas.getContext('2d')!.drawImage(img, 0, 0, w, h)
+      resolve(canvas.toDataURL('image/jpeg', quality))
+    }
+    img.src = dataUrl
+  })
+}
+
 const steps = ['Kişisel Bilgiler', 'Fotoğraflar', 'Bebek Bilgileri']
 
 export default function ProfileSetup() {
@@ -29,8 +47,9 @@ export default function ProfileSetup() {
       const file = (e.target as HTMLInputElement).files?.[0]
       if (file) {
         const reader = new FileReader()
-        reader.onload = (ev) => {
-          const url = ev.target?.result as string
+        reader.onload = async (ev) => {
+          const raw = ev.target?.result as string
+          const url = await compressImage(raw)
           if (type === 'mother') setForm({ ...form, motherPhoto: url })
           else setForm({ ...form, fatherPhoto: url })
         }
@@ -38,6 +57,34 @@ export default function ProfileSetup() {
       }
     }
     input.click()
+  }
+
+  const [dateErrors, setDateErrors] = useState<Record<string, string>>({})
+
+  const today = new Date().toISOString().split('T')[0]
+
+  const validateBirthDate = (field: string, value: string) => {
+    if (value && value > today) {
+      setDateErrors((prev) => ({ ...prev, [field]: 'Doğum tarihi gelecekte olamaz' }))
+    } else {
+      setDateErrors((prev) => {
+        const next = { ...prev }
+        delete next[field]
+        return next
+      })
+    }
+  }
+
+  const validateDueDate = (value: string) => {
+    if (value && value <= today) {
+      setDateErrors((prev) => ({ ...prev, dueDate: 'Tahmini doğum tarihi gelecekte olmalıdır' }))
+    } else {
+      setDateErrors((prev) => {
+        const next = { ...prev }
+        delete next.dueDate
+        return next
+      })
+    }
   }
 
   const handleNext = () => {
@@ -50,9 +97,16 @@ export default function ProfileSetup() {
   }
 
   const isStepValid = () => {
-    if (step === 0) return form.motherName.length > 0 && form.fatherName.length > 0
+    if (step === 0) {
+      const hasNames = form.motherName.length > 0 && form.fatherName.length > 0
+      const noBirthErrors = !dateErrors.motherBirthDate && !dateErrors.fatherBirthDate
+      return hasNames && noBirthErrors
+    }
     if (step === 1) return true
-    if (step === 2) return segment !== 'expecting' || form.dueDate.length > 0
+    if (step === 2) {
+      if (segment === 'expecting') return form.dueDate.length > 0 && !dateErrors.dueDate
+      return !dateErrors.dueDate
+    }
     return true
   }
 
@@ -113,10 +167,17 @@ export default function ProfileSetup() {
                       <input
                         type="date"
                         value={form.motherBirthDate}
-                        onChange={(e) => setForm({ ...form, motherBirthDate: e.target.value })}
+                        max={today}
+                        onChange={(e) => {
+                          setForm({ ...form, motherBirthDate: e.target.value })
+                          validateBirthDate('motherBirthDate', e.target.value)
+                        }}
                         className="w-full h-12 pl-10 pr-3 input-field text-sm"
                       />
                     </div>
+                    {dateErrors.motherBirthDate && (
+                      <p className="text-red-500 text-xs mt-1">{dateErrors.motherBirthDate}</p>
+                    )}
                   </div>
                   <div>
                     <label className="text-sm font-medium text-warm-text mb-1.5 block">Baba Doğum Tarihi</label>
@@ -125,10 +186,17 @@ export default function ProfileSetup() {
                       <input
                         type="date"
                         value={form.fatherBirthDate}
-                        onChange={(e) => setForm({ ...form, fatherBirthDate: e.target.value })}
+                        max={today}
+                        onChange={(e) => {
+                          setForm({ ...form, fatherBirthDate: e.target.value })
+                          validateBirthDate('fatherBirthDate', e.target.value)
+                        }}
                         className="w-full h-12 pl-10 pr-3 input-field text-sm"
                       />
                     </div>
+                    {dateErrors.fatherBirthDate && (
+                      <p className="text-red-500 text-xs mt-1">{dateErrors.fatherBirthDate}</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -198,10 +266,17 @@ export default function ProfileSetup() {
                       <input
                         type="date"
                         value={form.dueDate}
-                        onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
+                        min={segment === 'expecting' ? today : undefined}
+                        onChange={(e) => {
+                          setForm({ ...form, dueDate: e.target.value })
+                          if (segment === 'expecting') validateDueDate(e.target.value)
+                        }}
                         className="w-full h-12 pl-10 pr-3 input-field"
                       />
                     </div>
+                    {dateErrors.dueDate && (
+                      <p className="text-red-500 text-xs mt-1">{dateErrors.dueDate}</p>
+                    )}
                   </div>
                 )}
 
@@ -237,11 +312,11 @@ export default function ProfileSetup() {
         </motion.div>
 
         {/* Navigation */}
-        <div className="flex gap-3 mt-10">
+        <div className="flex gap-3 mt-10 min-w-0">
           {step > 0 && (
             <button
               onClick={() => setStep(step - 1)}
-              className="h-14 px-8 rounded-2xl border border-warm-border text-warm-text font-medium"
+              className="h-14 px-6 shrink-0 rounded-2xl border border-outline-variant/20 text-on-surface font-medium"
             >
               Geri
             </button>
@@ -249,7 +324,7 @@ export default function ProfileSetup() {
           <button
             onClick={handleNext}
             disabled={!isStepValid()}
-            className="flex-1 h-14 rounded-2xl gradient-primary text-white font-semibold flex items-center justify-center gap-2 shadow-glow-primary active:scale-[0.98] transition-transform disabled:opacity-50"
+            className="flex-1 min-w-0 h-14 rounded-2xl bg-gradient-to-r from-secondary to-secondary-dim text-white font-semibold flex items-center justify-center gap-2 shadow-lg shadow-secondary/30 active:scale-[0.98] transition-transform disabled:opacity-50"
           >
             {step === 2 ? 'Tamamla' : 'Devam'}
             <ArrowRight className="w-5 h-5" />

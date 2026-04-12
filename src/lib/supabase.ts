@@ -4,3 +4,13 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.su
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder-key'
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
+export function isSupabaseConfigured(): boolean {
+  return (
+    !!supabaseUrl &&
+    !!supabaseAnonKey &&
+    supabaseUrl !== 'https://placeholder.supabase.co' &&
+    supabaseAnonKey !== 'placeholder-key' &&
+    !supabaseUrl.includes('placeholder')
+  )
+}

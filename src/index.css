@@ -105,12 +105,12 @@
   --font-label: 'Be Vietnam Pro', sans-serif;
   --font-display: 'Plus Jakarta Sans', sans-serif;
 
-  /* Border Radius - stitch config */
+  /* Border Radius - stitch config scaled down for mobile screens */
   --radius-DEFAULT: 1rem;
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
-  --radius-lg: 2rem;
-  --radius-xl: 3rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.5rem;
   --radius-full: 9999px;
 
   /* Shadows */
@@ -310,6 +310,19 @@ body {
 }
 
 /* ── Input fields ── */
+/* Screen-reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 .input-field {
   width: 100%;
   height: 56px;

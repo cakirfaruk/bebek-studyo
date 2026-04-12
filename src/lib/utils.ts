@@ -1,6 +1,14 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
+export const PREGNANCY_DURATION_DAYS = 280
+export const PREGNANCY_WEEKS = 40
+export const INITIAL_CREDITS = 100
+export const MAX_NAME_HISTORY = 100
+export const MAX_FILE_SIZE_MB = 5
+export const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
+export const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -15,7 +23,7 @@ export function formatDate(date: Date | string, locale = 'tr-TR'): string {
 
 export function getWeekOfPregnancy(dueDate: string): number {
   const due = new Date(dueDate)
-  const conceptionDate = new Date(due.getTime() - 280 * 24 * 60 * 60 * 1000)
+  const conceptionDate = new Date(due.getTime() - PREGNANCY_DURATION_DAYS * 24 * 60 * 60 * 1000)
   const now = new Date()
   const diffMs = now.getTime() - conceptionDate.getTime()
   const weeks = Math.floor(diffMs / (7 * 24 * 60 * 60 * 1000))
@@ -48,6 +56,11 @@ export function calculateNumerology(name: string): number {
   return result
 }
 
+/**
+ * Determines the zodiac sign for a given date string.
+ * Iterates through a fixed 13-element array (O(13) worst case) which is
+ * effectively constant time and needs no further optimization.
+ */
 export function getZodiacSign(date: string): string {
   const d = new Date(date)
   const month = d.getMonth() + 1
@@ -73,6 +86,12 @@ export function getZodiacSign(date: string): string {
     }
   }
   return 'Oğlak'
+}
+
+export function getTrimesterLabel(week: number): string {
+  if (week <= 13) return 'Birinci Trimester'
+  if (week <= 26) return 'Ikinci Trimester'
+  return 'Ucuncu Trimester'
 }
 
 export function hasInternationalChars(name: string): boolean {

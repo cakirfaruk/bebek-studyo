@@ -27,6 +27,9 @@ interface AppState {
   // UI
   activeTab: string
 
+  // Error
+  error: string | null
+
   // Actions
   setAuthenticated: (v: boolean) => void
   setOnboarded: (v: boolean) => void
@@ -42,6 +45,7 @@ interface AppState {
   addAppointment: (a: Appointment) => void
   removeAppointment: (id: string) => void
   toggleAppointment: (id: string) => void
+  setError: (msg: string | null) => void
   setActiveTab: (t: string) => void
   logout: () => void
 }
@@ -59,6 +63,7 @@ export const useStore = create<AppState>()(
       completedChecklistItems: [],
       appointments: [],
       activeTab: 'home',
+      error: null,
 
       setAuthenticated: (v) => set({ isAuthenticated: v }),
       setOnboarded: (v) => set({ isOnboarded: v }),
@@ -105,8 +110,10 @@ export const useStore = create<AppState>()(
           ),
         })),
 
+      setError: (msg) => set({ error: msg }),
       setActiveTab: (t) => set({ activeTab: t }),
-      logout: () =>
+      logout: () => {
+        localStorage.removeItem('bebek-studio-storage')
         set({
           isAuthenticated: false,
           isOnboarded: false,
@@ -118,7 +125,9 @@ export const useStore = create<AppState>()(
           completedChecklistItems: [],
           appointments: [],
           activeTab: 'home',
-        }),
+          error: null,
+        })
+      },
     }),
     {
       name: 'bebek-studio-storage',

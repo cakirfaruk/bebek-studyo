@@ -14,8 +14,8 @@ export function MobileLayout({ children, title, showBack, showNav = true, onBack
   return (
     <div className="page-bg min-h-dvh relative">
       {/* Decorative background blobs */}
-      <div className="deco-blob-primary" style={{ width: 400, height: 400, top: -100, right: -100 }} />
-      <div className="deco-blob-secondary" style={{ width: 350, height: 350, bottom: -80, left: -80 }} />
+      <div className="absolute opacity-60 pointer-events-none" style={{ width: 400, height: 400, top: -100, right: -100, background: 'radial-gradient(circle, var(--color-primary-container) 0%, transparent 60%)', filter: 'blur(60px)', mixBlendMode: 'multiply' }} />
+      <div className="absolute opacity-50 pointer-events-none" style={{ width: 350, height: 350, bottom: -80, left: -80, background: 'radial-gradient(circle, var(--color-secondary-container) 0%, transparent 60%)', filter: 'blur(50px)', mixBlendMode: 'multiply' }} />
 
       <TopBar title={title} showBack={showBack} onBack={onBack} />
       <main

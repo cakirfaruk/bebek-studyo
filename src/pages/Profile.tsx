@@ -40,7 +40,7 @@ export default function Profile() {
                 {profile?.motherPhoto ? (
                   <img src={profile.motherPhoto} alt="" className="w-full h-full rounded-full object-cover" />
                 ) : (
-                  <span className="material-symbols-outlined text-on-surface-variant text-3xl">person</span>
+                  <span aria-hidden="true" className="material-symbols-outlined text-on-surface-variant text-3xl">person</span>
                 )}
               </div>
             </div>
@@ -70,7 +70,7 @@ export default function Profile() {
             <div className="text-center bg-surface-container-low rounded-xl py-3">
               <div className="font-bold text-lg text-on-surface font-display">
                 {profile?.isPremium ? (
-                  <span className="material-symbols-outlined text-secondary" style={{ fontVariationSettings: "'FILL' 1" }}>workspace_premium</span>
+                  <span aria-hidden="true" className="material-symbols-outlined text-secondary" style={{ fontVariationSettings: "'FILL' 1" }}>workspace_premium</span>
                 ) : (
                   <span className="text-on-surface-variant">Free</span>
                 )}
@@ -89,7 +89,7 @@ export default function Profile() {
           <div className="relative z-10 flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="material-symbols-outlined">star</span>
+                <span aria-hidden="true" className="material-symbols-outlined">star</span>
                 <h3 className="font-display font-bold">Kredi Satın Al</h3>
               </div>
               <p className="text-white/80 text-xs font-body">AI özelliklerini kullanmak için kredi gerekli</p>
@@ -117,7 +117,7 @@ export default function Profile() {
                   {favoriteNames.length}
                 </span>
               )}
-              <span className="material-symbols-outlined text-on-surface-variant text-base">chevron_right</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-on-surface-variant text-base">chevron_right</span>
             </button>
           ))}
         </div>
@@ -127,7 +127,7 @@ export default function Profile() {
           onClick={handleLogout}
           className="w-full flex items-center justify-center gap-2 py-4 rounded-full bg-error-container/10 text-error font-bold text-sm hover:bg-error-container/20 transition-colors"
         >
-          <span className="material-symbols-outlined">logout</span>
+          <span aria-hidden="true" className="material-symbols-outlined">logout</span>
           Çıkış Yap
         </button>
 
