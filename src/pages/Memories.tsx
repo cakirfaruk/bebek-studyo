@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { toast } from 'sonner'
 import { MobileLayout } from '@/components/layout/MobileLayout'
 import { useStore } from '@/stores/useStore'
 import { generateId, formatDate } from '@/lib/utils'
@@ -37,6 +38,20 @@ export default function Memories() {
     mood: 'happy',
     date: new Date().toISOString().split('T')[0],
   })
+
+  const handleShare = async (memory: MemoryEntry) => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: memory.title,
+          text: memory.content,
+        })
+      } catch { /* user cancelled */ }
+    } else {
+      await navigator.clipboard.writeText(`${memory.title}\n\n${memory.content}`)
+      toast.success('Panoya kopyalandı!')
+    }
+  }
 
   // Simulated photo upload
   const handlePhotoUpload = () => {
@@ -278,7 +293,16 @@ export default function Memories() {
                     </div>
                   </div>
                   <div className="px-4">
-                    <h4 className="font-headline font-extrabold text-2xl md:text-3xl text-on-surface leading-tight mb-3 tracking-tight break-words">{memory.title}</h4>
+                    <div className="flex items-start justify-between gap-2 mb-3">
+                      <h4 className="font-headline font-extrabold text-2xl md:text-3xl text-on-surface leading-tight tracking-tight break-words">{memory.title}</h4>
+                      <button
+                        onClick={() => handleShare(memory)}
+                        className="flex-shrink-0 w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:bg-secondary/10 hover:text-secondary transition-colors active:scale-95"
+                        aria-label="Paylaş"
+                      >
+                        <span aria-hidden="true" className="material-symbols-outlined text-xl">share</span>
+                      </button>
+                    </div>
                     <p className="text-on-surface-variant leading-relaxed font-body text-[15px]">{memory.content}</p>
                   </div>
                 </article>

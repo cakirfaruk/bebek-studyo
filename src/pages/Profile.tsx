@@ -5,6 +5,7 @@ import { useStore } from '@/stores/useStore'
 const menuItems = [
   { icon: 'edit', label: 'Profili Düzenle', path: '/profile-setup', iconBg: 'bg-primary-container/30', iconColor: 'text-primary' },
   { icon: 'favorite', label: 'Favori İsimler', path: '/names', iconBg: 'bg-primary/10', iconColor: 'text-primary', badge: true },
+  { icon: 'group', label: 'Eş Paylaşımı', path: '/partner', iconBg: 'bg-primary-container/20', iconColor: 'text-primary' },
   { icon: 'workspace_premium', label: 'Premium Üyelik', path: '/premium', iconBg: 'bg-secondary-container', iconColor: 'text-secondary' },
   { icon: 'notifications', label: 'Bildirimler', path: '/notifications', iconBg: 'bg-tertiary-container/30', iconColor: 'text-tertiary' },
   { icon: 'shield', label: 'Gizlilik', path: '/privacy', iconBg: 'bg-tertiary/10', iconColor: 'text-tertiary-dim' },

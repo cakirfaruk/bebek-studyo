@@ -24,6 +24,10 @@ interface AppState {
   // Appointments
   appointments: Appointment[]
 
+  // Health tracking
+  healthLogs: { id: string; date: string; type: 'weight' | 'water' | 'mood' | 'sleep'; value: string; note?: string }[]
+  addHealthLog: (log: { id: string; date: string; type: 'weight' | 'water' | 'mood' | 'sleep'; value: string; note?: string }) => void
+
   // UI
   activeTab: string
 
@@ -62,6 +66,7 @@ export const useStore = create<AppState>()(
       memories: [],
       completedChecklistItems: [],
       appointments: [],
+      healthLogs: [],
       activeTab: 'home',
       error: null,
 
@@ -99,6 +104,9 @@ export const useStore = create<AppState>()(
             : [...s.completedChecklistItems, id],
         })),
 
+      addHealthLog: (log) =>
+        set((s) => ({ healthLogs: [log, ...s.healthLogs] })),
+
       addAppointment: (a) =>
         set((s) => ({ appointments: [...s.appointments, a] })),
       removeAppointment: (id) =>
@@ -124,6 +132,7 @@ export const useStore = create<AppState>()(
           memories: [],
           completedChecklistItems: [],
           appointments: [],
+          healthLogs: [],
           activeTab: 'home',
           error: null,
         })
@@ -131,6 +140,37 @@ export const useStore = create<AppState>()(
     }),
     {
       name: 'bebek-studio-storage',
+      storage: {
+        getItem: (name: string) => {
+          try {
+            const value = localStorage.getItem(name)
+            return value ? JSON.parse(value) : null
+          } catch {
+            return null
+          }
+        },
+        setItem: (name: string, value: unknown) => {
+          try {
+            localStorage.setItem(name, JSON.stringify(value))
+          } catch {
+            console.warn('localStorage quota exceeded, clearing old data')
+            try {
+              // Try to clear name history to free space
+              const current = JSON.parse(localStorage.getItem(name) || '{}')
+              if (current.state?.nameHistory) {
+                current.state.nameHistory = current.state.nameHistory.slice(0, 20)
+                localStorage.setItem(name, JSON.stringify(current))
+              }
+            } catch {
+              // Last resort: remove item
+              localStorage.removeItem(name)
+            }
+          }
+        },
+        removeItem: (name: string) => {
+          localStorage.removeItem(name)
+        },
+      },
     }
   )
 )

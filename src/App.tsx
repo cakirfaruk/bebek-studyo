@@ -3,26 +3,43 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { useStore } from '@/stores/useStore'
 import { lazy, Suspense } from 'react'
+import { useOnlineStatus } from '@/hooks/useOnlineStatus'
 
-const Welcome = lazy(() => import('@/pages/Welcome'))
-const Auth = lazy(() => import('@/pages/Auth'))
-const SegmentSelect = lazy(() => import('@/pages/SegmentSelect'))
-const ProfileSetup = lazy(() => import('@/pages/ProfileSetup'))
-const Home = lazy(() => import('@/pages/Home'))
-const BabyFace = lazy(() => import('@/pages/BabyFace'))
-const NameFinder = lazy(() => import('@/pages/NameFinder'))
-const PregnancyTracker = lazy(() => import('@/pages/PregnancyTracker'))
-const Checklists = lazy(() => import('@/pages/Checklists'))
-const BabyGuide = lazy(() => import('@/pages/BabyGuide'))
-const Memories = lazy(() => import('@/pages/Memories'))
-const Appointments = lazy(() => import('@/pages/Appointments'))
-const CostCalculator = lazy(() => import('@/pages/CostCalculator'))
-const ReadinessQuiz = lazy(() => import('@/pages/ReadinessQuiz'))
-const Profile = lazy(() => import('@/pages/Profile'))
-const GiftList = lazy(() => import('@/pages/GiftList'))
-const Lullabies = lazy(() => import('@/pages/Lullabies'))
-const Stories = lazy(() => import('@/pages/Stories'))
-const ChildGuide = lazy(() => import('@/pages/ChildGuide'))
+function lazyRetry<T extends React.ComponentType<Record<string, unknown>>>(
+  factory: () => Promise<{ default: T }>
+) {
+  return lazy(() =>
+    factory().catch(() => {
+      // Retry once after 1 second
+      return new Promise<{ default: T }>((resolve) => {
+        setTimeout(() => resolve(factory()), 1000)
+      })
+    })
+  )
+}
+
+const Welcome = lazyRetry(() => import('@/pages/Welcome'))
+const Auth = lazyRetry(() => import('@/pages/Auth'))
+const SegmentSelect = lazyRetry(() => import('@/pages/SegmentSelect'))
+const ProfileSetup = lazyRetry(() => import('@/pages/ProfileSetup'))
+const Home = lazyRetry(() => import('@/pages/Home'))
+const BabyFace = lazyRetry(() => import('@/pages/BabyFace'))
+const NameFinder = lazyRetry(() => import('@/pages/NameFinder'))
+const PregnancyTracker = lazyRetry(() => import('@/pages/PregnancyTracker'))
+const Checklists = lazyRetry(() => import('@/pages/Checklists'))
+const BabyGuide = lazyRetry(() => import('@/pages/BabyGuide'))
+const Memories = lazyRetry(() => import('@/pages/Memories'))
+const Appointments = lazyRetry(() => import('@/pages/Appointments'))
+const CostCalculator = lazyRetry(() => import('@/pages/CostCalculator'))
+const ReadinessQuiz = lazyRetry(() => import('@/pages/ReadinessQuiz'))
+const Profile = lazyRetry(() => import('@/pages/Profile'))
+const GiftList = lazyRetry(() => import('@/pages/GiftList'))
+const Lullabies = lazyRetry(() => import('@/pages/Lullabies'))
+const Stories = lazyRetry(() => import('@/pages/Stories'))
+const ChildGuide = lazyRetry(() => import('@/pages/ChildGuide'))
+const Premium = lazyRetry(() => import('@/pages/Premium'))
+const HealthTracker = lazyRetry(() => import('@/pages/HealthTracker'))
+const Partner = lazyRetry(() => import('@/pages/Partner'))
 
 function LoadingScreen() {
   return (
@@ -58,6 +75,17 @@ class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasErr
   }
 }
 
+function OfflineBanner() {
+  const isOnline = useOnlineStatus()
+  if (isOnline) return null
+  return (
+    <div style={{ position:'fixed', top:0, left:0, right:0, zIndex:9999, background:'#ac3434', color:'white', textAlign:'center', padding:'8px 16px', fontSize:13, fontFamily:'Be Vietnam Pro' }}>
+      <span style={{marginRight:8}}>{'⚠️'}</span>
+      {'İnternet bağlantınız yok. Bazı özellikler çalışmayabilir.'}
+    </div>
+  )
+}
+
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useStore((s) => s.isAuthenticated)
   if (!isAuthenticated) return <Navigate to="/welcome" replace />
@@ -70,6 +98,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      <OfflineBanner />
       <Toaster
         position="top-center"
         toastOptions={{
@@ -146,6 +175,15 @@ export default function App() {
           } />
           <Route path="/child-guide" element={
             <ProtectedRoute><ChildGuide /></ProtectedRoute>
+          } />
+          <Route path="/premium" element={
+            <ProtectedRoute><Premium /></ProtectedRoute>
+          } />
+          <Route path="/health-tracker" element={
+            <ProtectedRoute><HealthTracker /></ProtectedRoute>
+          } />
+          <Route path="/partner" element={
+            <ProtectedRoute><Partner /></ProtectedRoute>
           } />
 
           {/* Fallback */}

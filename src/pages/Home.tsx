@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { MobileLayout } from '@/components/layout/MobileLayout'
 import { useStore } from '@/stores/useStore'
 import { getWeekOfPregnancy, getDaysUntilDue, getTrimesterLabel } from '@/lib/utils'
-import { toast } from 'sonner'
+
 
 interface FeatureCard {
   path: string
@@ -215,19 +215,19 @@ export default function Home() {
           transition={{ delay: 0.05 }}
           className="grid grid-cols-3 gap-4"
         >
-          <button onClick={() => toast.info('Bu özellik yakında aktif olacak')} className="flex flex-col items-center gap-3 p-4 rounded-lg bg-surface-container-lowest shadow-sm hover:shadow-md transition-shadow active:scale-95 group">
+          <button onClick={() => navigate('/health-tracker')} className="flex flex-col items-center gap-3 p-4 rounded-lg bg-surface-container-lowest shadow-sm hover:shadow-md transition-shadow active:scale-95 group">
             <div className="w-12 h-12 rounded-full bg-primary-container/20 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
               <span aria-hidden="true" className="material-symbols-outlined">monitor_weight</span>
             </div>
             <span className="font-body text-xs font-semibold text-on-surface-variant">Kilo</span>
           </button>
-          <button onClick={() => toast.info('Bu özellik yakında aktif olacak')} className="flex flex-col items-center gap-3 p-4 rounded-lg bg-surface-container-lowest shadow-sm hover:shadow-md transition-shadow active:scale-95 group">
+          <button onClick={() => navigate('/health-tracker')} className="flex flex-col items-center gap-3 p-4 rounded-lg bg-surface-container-lowest shadow-sm hover:shadow-md transition-shadow active:scale-95 group">
             <div className="w-12 h-12 rounded-full bg-secondary-container/40 flex items-center justify-center text-secondary group-hover:bg-secondary group-hover:text-on-secondary transition-colors">
               <span aria-hidden="true" className="material-symbols-outlined">mood</span>
             </div>
             <span className="font-body text-xs font-semibold text-on-surface-variant">Ruh Hali</span>
           </button>
-          <button onClick={() => toast.info('Bu özellik yakında aktif olacak')} className="flex flex-col items-center gap-3 p-4 rounded-lg bg-surface-container-lowest shadow-sm hover:shadow-md transition-shadow active:scale-95 group">
+          <button onClick={() => navigate('/health-tracker')} className="flex flex-col items-center gap-3 p-4 rounded-lg bg-surface-container-lowest shadow-sm hover:shadow-md transition-shadow active:scale-95 group">
             <div className="w-12 h-12 rounded-full bg-tertiary-container/20 flex items-center justify-center text-tertiary group-hover:bg-tertiary group-hover:text-on-tertiary transition-colors">
               <span aria-hidden="true" className="material-symbols-outlined">water_drop</span>
             </div>

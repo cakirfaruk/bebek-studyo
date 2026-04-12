@@ -26,9 +26,9 @@ export function TopBar({ title, showBack, onBack }: TopBarProps) {
             <span aria-hidden="true" className="material-symbols-outlined text-on-surface">arrow_back</span>
           </button>
         ) : (
-          <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-primary-fixed shadow-sm">
+          <button onClick={() => navigate('/profile-setup')} className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-primary-fixed shadow-sm cursor-pointer border-none p-0 bg-transparent">
             <img alt="Profile" className="w-full h-full object-cover" src={avatarUrl} />
-          </div>
+          </button>
         )}
         
         {title && showBack ? (
